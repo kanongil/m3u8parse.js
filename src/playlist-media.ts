@@ -79,7 +79,7 @@ export class MediaPlaylist extends BasePlaylist implements IRewritableUris {
         return index as MediaPlaylist;
     }
 
-    readonly master: false = false;
+    readonly master = false as const;
 
     target_duration: number;
     media_sequence: Msn;

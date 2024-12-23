@@ -2,7 +2,7 @@ import type * as AttrT from './attr-typings.js';
 
 import { AttrList, Byterange } from './attrlist.js';
 import { cloneAttrArray, IRewritableUris, isStringish, rewriteAttr, rewriteAttrs, UriMapFunction } from './playlist-base.js';
-import { Proto, URL } from './types.js';
+import { Proto } from './types.js';
 
 
 export class MediaSegment implements IRewritableUris {
@@ -116,7 +116,8 @@ interface FullSegment extends Readonly<MediaSegment> {
 
 
 interface PartialSegment extends Readonly<MediaSegment> {
-    isPartial(): true;
+    /** Only used for TS typings. @internal @deprecated */
+    readonly __isPartial__: undefined;
 }
 
 

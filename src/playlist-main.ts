@@ -24,7 +24,7 @@ export class MainPlaylist extends BasePlaylist implements IRewritableUris {
         return index as MainPlaylist;
     }
 
-    readonly master: true = true;
+    readonly master = true as const;
 
     variants: Variant[];
     groups: Map<string, AttrList<AttrT.Media>[]>;
