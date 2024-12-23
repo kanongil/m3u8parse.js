@@ -94,7 +94,7 @@ export class AttrList<E extends TAnyAttr = TAnyAttr> extends Map<StringKeys<E>, 
     get<K extends StringKeys<E>, T extends E[K]>(attr: K, type: Enum<T>): TypeMapping<T> | undefined;
     get(attr: StringKeys<E>, type: string = AttrType.Enum): unknown | undefined {
 
-        return this.has(attr) ? this._applyType(type as AttrType, attr) : undefined;
+        return this.has(attr) ? this._applyGetter(type as AttrType, attr) : undefined;
     }
 
     set(attr: StringKeys<E>, value: undefined | null): this;
@@ -106,7 +106,7 @@ export class AttrList<E extends TAnyAttr = TAnyAttr> extends Map<StringKeys<E>, 
             return this;
         }
 
-        this._applyType(type as AttrType, attr, value);
+        this._applySetter(type as AttrType, attr, value);
         return this;
     }
 
@@ -285,19 +285,37 @@ export class AttrList<E extends TAnyAttr = TAnyAttr> extends Map<StringKeys<E>, 
         return obj;
     }
 
-    private _applyType<K extends AttrType>(type: K, attr: StringKeys<E>, ...args: any[]) {
+    private _applyGetter<K extends AttrType>(type: K, attr: StringKeys<E>) {
 
         switch (type) {
-            case AttrType.BigInt: return this.decimalInteger(attr, ...args);
-            case AttrType.HexInt: return this.hexadecimalInteger(attr, ...args);
-            case AttrType.Int: return this.decimalIntegerAsNumber(attr, ...args);
-            case AttrType.HexNo: return this.hexadecimalIntegerAsNumber(attr, ...args);
-            case AttrType.Enum: return this.enumeratedString(attr, ...args);
-            case AttrType.String: return this.quotedString(attr, ...args);
-            case AttrType.Float: return this.decimalFloatingPoint(attr, ...args);
-            case AttrType.SignedFloat: return this.signedDecimalFloatingPoint(attr, ...args);
-            case AttrType.Resolution: return this.decimalResolution(attr, ...args);
-            case AttrType.Byterange: return this.decimalByterange(attr, ...args);
+            case AttrType.BigInt: return this.decimalInteger(attr);
+            case AttrType.HexInt: return this.hexadecimalInteger(attr);
+            case AttrType.Int: return this.decimalIntegerAsNumber(attr);
+            case AttrType.HexNo: return this.hexadecimalIntegerAsNumber(attr);
+            case AttrType.Enum: return this.enumeratedString(attr);
+            case AttrType.String: return this.quotedString(attr);
+            case AttrType.Float: return this.decimalFloatingPoint(attr);
+            case AttrType.SignedFloat: return this.signedDecimalFloatingPoint(attr);
+            case AttrType.Resolution: return this.decimalResolution(attr);
+            case AttrType.Byterange: return this.decimalByterange(attr);
+        }
+
+        throw new TypeError('Invalid type: ' + type);
+    }
+
+    private _applySetter<K extends AttrType>(type: K, attr: StringKeys<E>, value: any) {
+
+        switch (type) {
+            case AttrType.BigInt: return this.decimalInteger(attr, value);
+            case AttrType.HexInt: return this.hexadecimalInteger(attr, value);
+            case AttrType.Int: return this.decimalIntegerAsNumber(attr, value);
+            case AttrType.HexNo: return this.hexadecimalIntegerAsNumber(attr, value);
+            case AttrType.Enum: return this.enumeratedString(attr, value);
+            case AttrType.String: return this.quotedString(attr, value);
+            case AttrType.Float: return this.decimalFloatingPoint(attr, value);
+            case AttrType.SignedFloat: return this.signedDecimalFloatingPoint(attr, value);
+            case AttrType.Resolution: return this.decimalResolution(attr, value);
+            case AttrType.Byterange: return this.decimalByterange(attr, value);
         }
 
         throw new TypeError('Invalid type: ' + type);
