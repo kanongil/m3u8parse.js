@@ -1,4 +1,4 @@
-import { Attr, Byterange, Resolution } from './attr-typings.js';
+import { Attr, Byterange, Resolution } from './attr-types.js';
 
 
 const deserialize: Record<Attr, (stringValue: string) => any> = {

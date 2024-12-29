@@ -32,7 +32,7 @@
       "default": "./lib/index.js"
     },
     "./types/attrs": {
-      "types": "./lib/attr-typings.d.ts"
+      "types": "./lib/attr-types.d.ts"
     },
     "./attrlist": "./lib/attrlist.js",
     "./playlist": "./lib/playlist.js"

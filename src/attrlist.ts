@@ -1,6 +1,6 @@
 import deserialize from './attr-deserialize.js';
 import serialize from './attr-serialize.js';
-import { Attr, Byterange, Resolution } from './attr-typings.js';
+import { Attr, Byterange, Resolution } from './attr-types.js';
 
 export { Attr as AttrType };
 export type { Byterange, Resolution };

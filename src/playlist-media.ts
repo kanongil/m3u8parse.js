@@ -1,4 +1,4 @@
-import type * as AttrT from './attr-typings.js';
+import type * as AttrT from './attr-types.js';
 
 import { TAnyAttr, AttrList, Byterange } from './attrlist.js';
 import { ImmutableMediaSegment, IndependentSegment, MediaSegment } from './media-segment.js';

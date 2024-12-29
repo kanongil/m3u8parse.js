@@ -1,4 +1,4 @@
-import type * as AttrT from './attr-typings.js';
+import type * as AttrT from './attr-types.js';
 
 import { AttrList } from './attrlist.js';
 import { BasePlaylist, cloneAttrArray, cloneAttrMap, ImmutableUriMapFunction, Immutify, IRewritableUris, isStringish, rewriteAttrs, rewriteMappedAttrs, UriMapFunction } from './playlist-base.js';

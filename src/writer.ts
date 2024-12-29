@@ -1,4 +1,4 @@
-import type * as Attr from './attr-typings.js';
+import type * as Attr from './attr-types.js';
 
 import { TAnyAttr, AttrList, ImmutableAttrList } from './attrlist.js';
 import { isStringish } from './playlist-base.js';
