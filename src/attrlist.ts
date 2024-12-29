@@ -1,35 +1,20 @@
+import deserialize from './attr-deserialize.js';
+import serialize from './attr-serialize.js';
+import { Attr, Byterange, Resolution } from './attr-typings.js';
+
+export { Attr as AttrType };
+export type { Byterange, Resolution };
+
+
 type Enum<T extends string> = T | `${T}`;
 type StringKeys<T> = Extract<keyof T, string>;
 
-export type Resolution = {
-    width: number;
-    height: number;
-};
-
-export type Byterange = {
-    offset?: number;
-    length: number;
-};
-
-export enum AttrType {
-    BigInt = 'bigint',
-    HexInt = 'hexint',
-    Int = 'int',
-    HexNo = 'hexno',
-    Enum = 'enum',
-    String = 'string',
-    Float = 'float',
-    SignedFloat = 'signed-float',
-    Resolution = 'resolution',
-    Byterange = 'byterange'
-}
-
-type TypeMapping<T extends AttrType> =
-    T extends Enum<AttrType.BigInt | AttrType.HexInt> ? bigint :
-        T extends Enum<AttrType.Int | AttrType.HexNo | AttrType.Float | AttrType.SignedFloat> ? number :
-            T extends Enum<AttrType.Enum | AttrType.String> ? string :
-                T extends Enum<AttrType.Resolution> ? Resolution :
-                    T extends Enum<AttrType.Byterange> ? Byterange :
+type TypeMapping<T extends Attr> =
+    T extends Enum<Attr.BigInt | Attr.HexInt> ? bigint :
+        T extends Enum<Attr.Int | Attr.HexNo | Attr.Float | Attr.SignedFloat> ? number :
+            T extends Enum<Attr.Enum | Attr.String> ? string :
+                T extends Enum<Attr.Resolution> ? Resolution :
+                    T extends Enum<Attr.Byterange> ? Byterange :
                         never;
 
 const tokenify = function <T extends string>(attr: T): T {
@@ -41,14 +26,14 @@ const tokenify = function <T extends string>(attr: T): T {
     return attr.toLowerCase() as T;
 };
 
-export type TAnyAttr = { [key: string]: AttrType };
+export type TAnyAttr = { [key: string]: Attr };
 
 // AttrList's are handled without any implicit knowledge of key/type mapping
 
 // eslint-disable-next-line @typescript-eslint/ban-types
 export class AttrList<E extends TAnyAttr = TAnyAttr> extends Map<StringKeys<E>, string> {
 
-    static readonly Types = AttrType;
+    static readonly Types = Attr;
 
     constructor(attrs?: ImmutableAttrList<E> | string | { readonly [key in StringKeys<E>]?: string } | Map<string, unknown> | ReadonlyArray<ReadonlyArray<string>>);
     constructor(attrs?: AttrList | string | { [key: string]: string } | Map<string, unknown> | Array<Array<string>>) {
@@ -92,21 +77,42 @@ export class AttrList<E extends TAnyAttr = TAnyAttr> extends Map<StringKeys<E>, 
 
     get(attr: StringKeys<E>): string | undefined;
     get<K extends StringKeys<E>, T extends E[K]>(attr: K, type: Enum<T>): TypeMapping<T> | undefined;
-    get(attr: StringKeys<E>, type: string = AttrType.Enum): unknown | undefined {
+    get(attr: StringKeys<E>, type: Enum<Attr> = Attr.Enum): unknown | undefined {
 
-        return this.has(attr) ? this._applyGetter(type as AttrType, attr) : undefined;
+        attr = tokenify(attr);
+
+        const stringValue = super.get(attr);
+        if (stringValue !== undefined) {
+            const formatter = deserialize[type];
+            if (!formatter) {
+                throw new TypeError('Invalid type: ' + type);
+            }
+
+            return formatter(stringValue);
+        }
+
+        return stringValue;
     }
 
     set(attr: StringKeys<E>, value: undefined | null): this;
-    set<K extends StringKeys<E>, T extends AttrType>(attr: K, value: TypeMapping<T>, type?: Enum<E[K]>): this;
-    set(attr: StringKeys<E>, value: unknown, type: Enum<AttrType> = AttrType.Enum): this {
+    set<K extends StringKeys<E>, T extends Attr>(attr: K, value: TypeMapping<T>, type?: Enum<E[K]>): this;
+    set(attr: StringKeys<E>, value: unknown, type: Enum<Attr> = Attr.Enum): this {
+
+        attr = tokenify(attr);
 
         if (value === undefined || value === null) {
-            this.delete(attr);
+            super.delete(attr);
             return this;
         }
 
-        this._applySetter(type as AttrType, attr, value);
+        const formatter = serialize[type];
+        if (!formatter) {
+            throw new TypeError('Invalid type: ' + type);
+        }
+
+        const stringValue = formatter(value);
+        super.set(attr, stringValue);
+
         return this;
     }
 
@@ -118,147 +124,6 @@ export class AttrList<E extends TAnyAttr = TAnyAttr> extends Map<StringKeys<E>, 
     delete(attr: StringKeys<E>): boolean {
 
         return super.delete(tokenify(attr));
-    }
-
-    decimalInteger(attrName: StringKeys<E>, value?: number | bigint): bigint {
-
-        const name = tokenify(attrName);
-        if (arguments.length > 1) {
-            super.set(name, BigInt(value!).toString(10));
-        }
-
-        const stringValue = super.get(name) as string;
-        const intValue = BigInt(stringValue);
-
-        if (/^\s*0[^\d]/.test(stringValue as string)) {
-            throw new SyntaxError('Representation is not decimal integer compatible');
-        }
-
-        return intValue;
-    }
-
-    hexadecimalInteger(attrName: StringKeys<E>, value?: number | bigint): bigint {
-
-        const name = tokenify(attrName);
-        if (arguments.length > 1) {
-            super.set(name, '0x' + BigInt(value!).toString(16));
-        }
-
-        const stringValue = super.get(name) as string;
-        const intValue = BigInt(stringValue!);
-
-        if (!/^\s*0x/.test(stringValue as string)) {
-            throw new SyntaxError('Representation is not hexadecimal integer compatible');
-        }
-
-        return intValue;
-    }
-
-    decimalIntegerAsNumber(attrName: StringKeys<E>, value?: number | bigint): number {
-
-        if (arguments.length > 1) {
-            this.decimalInteger(attrName, value);
-        }
-
-        const name = tokenify(attrName);
-        const intValue = parseInt(super.get(name) as string, 10);
-        if (intValue > Number.MAX_SAFE_INTEGER) {
-            return Number.POSITIVE_INFINITY;
-        }
-
-        return intValue;
-    }
-
-    hexadecimalIntegerAsNumber(attrName: StringKeys<E>, value?: number | bigint): number {
-
-        if (arguments.length > 1) {
-            this.hexadecimalInteger(attrName, value);
-        }
-
-        const name = tokenify(attrName);
-        const intValue = parseInt(super.get(name) as string, 16);
-        if (intValue > Number.MAX_SAFE_INTEGER) {
-            return Number.POSITIVE_INFINITY;
-        }
-
-        return intValue;
-    }
-
-    decimalFloatingPoint(attrName: StringKeys<E>, value?: number | bigint): number {
-
-        const name = tokenify(attrName);
-        if (arguments.length > 1) {
-            super.set(name, value!.toString());
-        }
-
-        return parseFloat(super.get(name) as string);
-    }
-
-    signedDecimalFloatingPoint(attrName: StringKeys<E>, value?: number | bigint): number {
-
-        const name = tokenify(attrName);
-        if (arguments.length > 1) {
-            super.set(name, value!.toString());
-        }
-
-        return parseFloat(super.get(name) as string);
-    }
-
-    quotedString(attrName: StringKeys<E>, value?: unknown): string | undefined {
-
-        const name = tokenify(attrName);
-        if (arguments.length > 1) {
-            super.set(name, `"${value}"`);
-        }
-
-        const val = super.get(name) as string;
-        return val ? val.slice(1, -1) : undefined;
-    }
-
-    enumeratedString(attrName: StringKeys<E>, value?: unknown): string | undefined {
-
-        const name = tokenify(attrName);
-        if (arguments.length > 1) {
-            super.set(name, `${value}`);
-        }
-
-        return super.get(name) as string | undefined;
-    }
-
-    decimalResolution(attrName: StringKeys<E>, value?: Resolution): Resolution | undefined {
-
-        const name = tokenify(attrName);
-        if (arguments.length > 1) {
-            // eslint-disable-next-line @typescript-eslint/no-non-null-asserted-optional-chain
-            super.set(name, '' + Math.floor(value?.width!) + 'x' + Math.floor(value?.height!));
-        }
-
-        const res = /^(\d+)x(\d+)$/.exec(super.get(name) as string);
-        if (res === null) {
-            return undefined;
-        }
-
-        return { width: parseInt(res[1], 10), height: parseInt(res[2], 10) };
-    }
-
-    /* unofficial type */
-    decimalByterange(attrName: StringKeys<E>, value?: Byterange): Byterange | undefined {
-
-        const name = tokenify(attrName);
-        if (arguments.length > 1) {
-            const base = `"${Math.floor(value?.length ?? 0)}`;
-            super.set(name, base + (value?.offset === undefined ? '"' : `@${Math.floor(value.offset)}"`));
-        }
-
-        const res = /^"?(\d+)(?:@(\d+))?"?$/.exec(super.get(name) as string);
-        if (res === null) {
-            return undefined;
-        }
-
-        return {
-            offset: res[2] !== undefined ? parseInt(res[2], 10) : undefined,
-            length: parseInt(res[1], 10)
-        };
     }
 
     toString(): string {
@@ -284,43 +149,7 @@ export class AttrList<E extends TAnyAttr = TAnyAttr> extends Map<StringKeys<E>, 
 
         return obj;
     }
-
-    private _applyGetter<K extends AttrType>(type: K, attr: StringKeys<E>) {
-
-        switch (type) {
-            case AttrType.BigInt: return this.decimalInteger(attr);
-            case AttrType.HexInt: return this.hexadecimalInteger(attr);
-            case AttrType.Int: return this.decimalIntegerAsNumber(attr);
-            case AttrType.HexNo: return this.hexadecimalIntegerAsNumber(attr);
-            case AttrType.Enum: return this.enumeratedString(attr);
-            case AttrType.String: return this.quotedString(attr);
-            case AttrType.Float: return this.decimalFloatingPoint(attr);
-            case AttrType.SignedFloat: return this.signedDecimalFloatingPoint(attr);
-            case AttrType.Resolution: return this.decimalResolution(attr);
-            case AttrType.Byterange: return this.decimalByterange(attr);
-        }
-
-        throw new TypeError('Invalid type: ' + type);
-    }
-
-    private _applySetter<K extends AttrType>(type: K, attr: StringKeys<E>, value: any) {
-
-        switch (type) {
-            case AttrType.BigInt: return this.decimalInteger(attr, value);
-            case AttrType.HexInt: return this.hexadecimalInteger(attr, value);
-            case AttrType.Int: return this.decimalIntegerAsNumber(attr, value);
-            case AttrType.HexNo: return this.hexadecimalIntegerAsNumber(attr, value);
-            case AttrType.Enum: return this.enumeratedString(attr, value);
-            case AttrType.String: return this.quotedString(attr, value);
-            case AttrType.Float: return this.decimalFloatingPoint(attr, value);
-            case AttrType.SignedFloat: return this.signedDecimalFloatingPoint(attr, value);
-            case AttrType.Resolution: return this.decimalResolution(attr, value);
-            case AttrType.Byterange: return this.decimalByterange(attr, value);
-        }
-
-        throw new TypeError('Invalid type: ' + type);
-    }
 }
 
 // eslint-disable-next-line @typescript-eslint/no-empty-interface
-export interface ImmutableAttrList<T extends TAnyAttr = TAnyAttr> extends Omit<AttrList<T>, 'clear' | 'delete' | 'set'> {}
+export interface ImmutableAttrList<T extends TAnyAttr = TAnyAttr> extends Pick<AttrList<T>, keyof ReadonlyMap<any, any>> {}

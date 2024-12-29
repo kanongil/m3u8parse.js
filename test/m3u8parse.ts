@@ -510,15 +510,15 @@ describe('M3U8Playlist', () => {
 
             const index = new MediaPlaylist(testIndex).rewriteUris(mapFn);
             expect(index.segments[0].uri).to.equal('http://media.example.com/fileSequence52-A.ts?segment');
-            expect(index.segments[0].keys![0].quotedString('uri')).to.equal('https://priv.example.com/key.php?r=52?segment-key');
+            expect(index.segments[0].keys![0].get('uri', 'string')).to.equal('https://priv.example.com/key.php?r=52?segment-key');
             expect(index.segments[3].uri).to.equal('http://media.example.com/fileSequence53-A.ts?segment');
             // TODO: test segment-map
 
             const index2 = new MediaPlaylist(testIndexLl).rewriteUris(mapFn);
-            expect(index2.meta.rendition_reports![0].quotedString('uri')).to.equal('../1M/waitForMSN.php?rendition-report');
-            expect(index2.meta.preload_hints![0].quotedString('uri')).to.equal('filePart273.4.mp4?preload-hint');
-            expect(index2.segments[2].parts![0].quotedString('uri')).to.equal('filePart271.0.mp4?segment-part');
-            expect(index2.segments[4].parts![3].quotedString('uri')).to.equal('filePart273.3.mp4?segment-part');
+            expect(index2.meta.rendition_reports![0].get('uri', 'string')).to.equal('../1M/waitForMSN.php?rendition-report');
+            expect(index2.meta.preload_hints![0].get('uri', 'string')).to.equal('filePart273.4.mp4?preload-hint');
+            expect(index2.segments[2].parts![0].get('uri', 'string')).to.equal('filePart271.0.mp4?segment-part');
+            expect(index2.segments[4].parts![3].get('uri', 'string')).to.equal('filePart273.3.mp4?segment-part');
         });
 
         it('should map all main playlist uris', () => {
@@ -532,12 +532,12 @@ describe('M3U8Playlist', () => {
 
             expect(index.variants[0].uri).to.equal('low/video-only.m3u8?variant');
             expect(index.variants[3].uri).to.equal('main/english-audio.m3u8?variant');
-            expect(index.iframes[0].quotedString('uri')).to.equal('lo/iframes.m3u8?iframe');
-            expect(index.iframes[2].quotedString('uri')).to.equal('hi/iframes.m3u8?iframe');
-            expect(index.groups.get('aac')![0].quotedString('uri')).to.equal('main/english-audio.m3u8?group');
-            expect(index.groups.get('aac')![2].quotedString('uri')).to.equal('commentary/audio-only.m3u8?group');
-            expect(index.data.get('com.example.lyrics')![0].quotedString('uri')).to.equal('lyrics.json?data');
-            expect(index.session_keys[0].quotedString('uri')).to.equal('https://priv.example.com/key.php?r=52?session-key');
+            expect(index.iframes[0].get('uri', 'string')).to.equal('lo/iframes.m3u8?iframe');
+            expect(index.iframes[2].get('uri', 'string')).to.equal('hi/iframes.m3u8?iframe');
+            expect(index.groups.get('aac')![0].get('uri', 'string')).to.equal('main/english-audio.m3u8?group');
+            expect(index.groups.get('aac')![2].get('uri', 'string')).to.equal('commentary/audio-only.m3u8?group');
+            expect(index.data.get('com.example.lyrics')![0].get('uri', 'string')).to.equal('lyrics.json?data');
+            expect(index.session_keys[0].get('uri', 'string')).to.equal('https://priv.example.com/key.php?r=52?session-key');
         });
 
         it('preserves uris when mapFn returns undefined', () => {
@@ -549,13 +549,13 @@ describe('M3U8Playlist', () => {
 
             const index = new MediaPlaylist(testIndex).rewriteUris(mapFn);
             expect(index.segments[0].uri).to.equal('http://media.example.com/fileSequence52-A.ts');
-            expect(index.segments[0].keys![0].quotedString('uri')).to.equal('https://priv.example.com/key.php?r=52');
+            expect(index.segments[0].keys![0].get('uri', 'string')).to.equal('https://priv.example.com/key.php?r=52');
             expect(index.segments[3].uri).to.equal('http://media.example.com/fileSequence53-A.ts');
 
             const index2 = new MainPlaylist(mainIndex).rewriteUris(mapFn);
             expect(index2.variants[0].uri).to.equal('low/video-only.m3u8');
-            expect(index2.iframes[0].quotedString('uri')).to.equal('lo/iframes.m3u8');
-            expect(index2.groups.get('aac')![0].quotedString('uri')).to.equal('main/english-audio.m3u8');
+            expect(index2.iframes[0].get('uri', 'string')).to.equal('lo/iframes.m3u8');
+            expect(index2.groups.get('aac')![0].get('uri', 'string')).to.equal('main/english-audio.m3u8');
         });
 
         it('resolves in playlist order', () => {
@@ -612,7 +612,7 @@ describe('M3U8Playlist', () => {
 
             const index2 = index.rewriteUris(mapFn);
             expect(index2.segments[0].uri).to.equal('http://media.example.com/fileSequence52-A.ts?segment');
-            expect(index2.segments[0].keys![0].quotedString('uri')).to.equal('https://priv.example.com/key.php?r=52?segment-key');
+            expect(index2.segments[0].keys![0].get('uri', 'string')).to.equal('https://priv.example.com/key.php?r=52?segment-key');
             expect(index2.segments[3].uri).to.equal('http://media.example.com/fileSequence53-A.ts?segment');
         });
 
@@ -621,10 +621,10 @@ describe('M3U8Playlist', () => {
             const mapFn: MapType = () => '';
 
             const index = new MediaPlaylist(testIndexLl).rewriteUris(mapFn);
-            expect(index.meta.rendition_reports![0].quotedString('uri')).to.equal('');
-            expect(index.meta.preload_hints![0].quotedString('uri')).to.equal('');
+            expect(index.meta.rendition_reports![0].get('uri', 'string')).to.equal('');
+            expect(index.meta.preload_hints![0].get('uri', 'string')).to.equal('');
             expect(index.segments[0].uri).to.equal('');
-            expect(index.segments[2].parts![0].quotedString('uri')).to.equal('');
+            expect(index.segments[2].parts![0].get('uri', 'string')).to.equal('');
 
             const index2 = new MainPlaylist(mainIndex).rewriteUris(mapFn);
             expect(index2.variants[0].uri).to.equal('');
@@ -635,9 +635,9 @@ describe('M3U8Playlist', () => {
 
         it('session-data', () => {
 
-            expect(mainIndex.data.get('com.example.lyrics')![0].quotedString('uri')).to.equal('lyrics.json');
-            expect(mainIndex.data.get('com.example.title')![0].quotedString('value')).to.equal('This is an example');
-            expect(mainIndex.data.get('com.example.title')![1].quotedString('value')).to.equal('Este es un ejemplo');
+            expect(mainIndex.data.get('com.example.lyrics')![0].get('uri', 'string')).to.equal('lyrics.json');
+            expect(mainIndex.data.get('com.example.title')![0].get('value', 'string')).to.equal('This is an example');
+            expect(mainIndex.data.get('com.example.title')![1].get('value', 'string')).to.equal('Este es un ejemplo');
         });
 
         it('segment gap info', () => {

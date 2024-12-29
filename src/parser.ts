@@ -63,7 +63,7 @@ const extParser = new Map<string,(state: ParserState, arg?: string) => void>([
     ['SESSION-DATA', (_, arg) => {
 
         const attrs = new AttrList(arg);
-        const id = attrs.quotedString('data-id');
+        const id = attrs.get('data-id', AttrList.Types.String);
 
         if (id) {
             let list = (_.m3u8.data ??= new Map()).get(id);
