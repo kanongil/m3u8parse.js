@@ -3,7 +3,7 @@ import type * as Attr from './attr-types.js';
 import { TAnyAttr, AttrList, ImmutableAttrList } from './attrlist.js';
 import { isStringish } from './playlist-base.js';
 import { MediaPlaylist, ImmutableMediaSegment, ImmutableMainPlaylist as ImmutableMainPlaylist, ImmutableMediaPlaylist as ImmutableMediaPlaylist } from './playlist.js';
-import { PropsOf } from './types.js';
+import type { PropsOf } from './types.js';
 
 
 const stringifyAttrs = function <T extends TAnyAttr>(attrs: ImmutableAttrList<T> | undefined) {

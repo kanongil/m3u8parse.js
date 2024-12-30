@@ -1,6 +1,6 @@
 import { AttrList } from './attrlist.js';
 import { MediaPlaylist, MainPlaylist, MediaSegment, M3U8Playlist } from './playlist.js';
-import { PropsOf } from './types.js';
+import type { PropsOf } from './types.js';
 
 
 export enum PlaylistType {

@@ -4,7 +4,7 @@ import { TAnyAttr, AttrList, Byterange } from './attrlist.js';
 import { ImmutableMediaSegment, IndependentSegment, MediaSegment } from './media-segment.js';
 import { BasePlaylist, cloneAttrArray, ImmutableUriMapFunction, Immutify, IRewritableUris, rewriteAttrs, UriMapFunction } from './playlist-base.js';
 import { MainPlaylist } from './playlist-main.js';
-import { BigIntish, Proto } from './types.js';
+import type { Proto } from './types.js';
 
 
 type Msn = number;
@@ -36,6 +36,21 @@ const formatMsn = function (obj?: Msn): Msn | undefined {
     return (obj === undefined || type === 'number' || type === 'bigint') ? obj : +obj;
 };
 
+/* c8 ignore start */
+
+const useBigInt = typeof BigInt !== 'undefined' && typeof BigInt(0) === 'bigint';     // Only when supported
+
+const toBigInt = useBigInt ? BigInt : (value: unknown) => {
+
+    const number = Number(value);
+    if (isNaN(number) || Math.floor(number) !== number) {
+        throw new SyntaxError(`Cannot convert ${value} to a (fake) BigInt`);
+    }
+
+    return <bigint><unknown>number;
+};
+
+/* c8 ignore stop */
 
 const tryBigInt = function (value: unknown): bigint | undefined {
 
@@ -45,7 +60,7 @@ const tryBigInt = function (value: unknown): bigint | undefined {
         }
 
         if (typeof value === 'number' || typeof value === 'string') {
-            return BigIntish(value);
+            return toBigInt(value);
         }
     }
     catch (err) { }
@@ -216,16 +231,21 @@ export class MediaPlaylist extends BasePlaylist implements IRewritableUris {
         return includePartial ? msn : msn - +this.getSegment(msn)!.isPartial();
     }
 
-    // return whether the msn (and part) is in the index
+    /**
+     * Return whether the msn, and optional part, are contained in the index
+     * @param msn - Media sequence number to test
+     * @param part - Part index of `msn` to test
+     * @returns `true` when contained, else `false`
+     */
     isValidMsn(msn: Msn | string | bigint, part?: number): boolean {
 
         msn = tryBigInt(msn)!;
 
-        if (msn < BigIntish(this.media_sequence)) {
+        if (msn < toBigInt(this.media_sequence)) {
             return false;
         }
 
-        const lastMsn = BigIntish(this.lastMsn(true));
+        const lastMsn = toBigInt(this.lastMsn(true));
         if (msn > lastMsn) {
             return false;
         }
@@ -238,7 +258,7 @@ export class MediaPlaylist extends BasePlaylist implements IRewritableUris {
 
         if (part !== undefined) {
             if (part < 0) {      // Any negative part is assumed to be from the previous segment
-                return this.isValidMsn(msn - BigIntish(1));
+                return this.isValidMsn(msn - toBigInt(1));
             }
 
             const { parts = { length: -1 } } = this.getSegment(lastMsn)!;
@@ -365,7 +385,7 @@ export class MediaPlaylist extends BasePlaylist implements IRewritableUris {
             return undefined;
         }
 
-        const segmentIdx = Number(msn - BigIntish(this.media_sequence));
+        const segmentIdx = Number(msn - toBigInt(this.media_sequence));
         const segment = this.segments[segmentIdx];
         if (!segment || !segment.byterange) {
             return undefined;
@@ -425,7 +445,7 @@ export class MediaPlaylist extends BasePlaylist implements IRewritableUris {
             return null;
         }
 
-        const index = Number(msn - BigIntish(this.media_sequence));
+        const index = Number(msn - toBigInt(this.media_sequence));
         const rawSegment = this.segments[index] as ImmutableMediaSegment | null ?? null;
         if (!independent || !rawSegment) {
             return rawSegment;

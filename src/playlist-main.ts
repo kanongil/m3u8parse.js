@@ -3,7 +3,7 @@ import type * as AttrT from './attr-types.js';
 import { AttrList } from './attrlist.js';
 import { BasePlaylist, cloneAttrArray, cloneAttrMap, ImmutableUriMapFunction, Immutify, IRewritableUris, isStringish, rewriteAttrs, rewriteMappedAttrs, UriMapFunction } from './playlist-base.js';
 import { MediaPlaylist } from './playlist-media.js';
-import { Proto } from './types.js';
+import type { Proto } from './types.js';
 
 
 interface Variant {

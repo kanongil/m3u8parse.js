@@ -4,7 +4,7 @@ import type { ImmutableMediaSegment, MediaSegment } from './media-segment.js';
 
 import { AttrList } from './attrlist.js';
 import { PlaylistWriter } from './writer.js';
-import { Proto } from './types.js';
+import type { Proto } from './types.js';
 
 
 export type UriMapFunction<T extends string = string> = (uri: string | undefined, type: T, data: unknown) => string | undefined | void;
