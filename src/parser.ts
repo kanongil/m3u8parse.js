@@ -1,4 +1,5 @@
-import { AttrList } from './attrlist.js';
+import { AttrList, AttrType } from './attrlist.js';
+import deserialize from './attr-deserialize.js';
 import { MediaPlaylist, MainPlaylist, MediaSegment, M3U8Playlist } from './playlist.js';
 import type { PropsOf } from './types.js';
 
@@ -21,12 +22,15 @@ interface ParserState {
 }
 
 
+const parseDecimalInteger = deserialize[AttrType.Int];
+
+
 const extParser = new Map<string,(state: ParserState, arg?: string) => void>([
     /* eslint-disable no-return-assign */
     ['VERSION', (_, arg) => _.m3u8.version = parseInt(arg!, 10)],
-    ['TARGETDURATION', (_, arg) => _.m3u8.target_duration = parseInt(arg!, 10)],
-    ['MEDIA-SEQUENCE', (_, arg) => _.m3u8.media_sequence = parseInt(arg!, 10)],
-    ['DISCONTINUITY-SEQUENCE', (_, arg) => _.m3u8.discontinuity_sequence = parseInt(arg!, 10)],
+    ['TARGETDURATION', (_, arg) => _.m3u8.target_duration = parseDecimalInteger(arg!)],
+    ['MEDIA-SEQUENCE', (_, arg) => _.m3u8.media_sequence = parseDecimalInteger(arg!)],
+    ['DISCONTINUITY-SEQUENCE', (_, arg) => _.m3u8.discontinuity_sequence = parseDecimalInteger(arg!)],
     ['PLAYLIST-TYPE', (_, arg) => _.m3u8.type = arg!],
     ['START', (_, arg) => _.m3u8.start = new AttrList(arg!)],
     ['INDEPENDENT-SEGMENTS', (_) => _.m3u8.independent_segments = true],
@@ -77,6 +81,7 @@ const extParser = new Map<string,(state: ParserState, arg?: string) => void>([
     }],
     ['SESSION-KEY', (_, arg) => (_.m3u8.session_keys ??= []).push(new AttrList(arg))],
     ['GAP', (_) => _.meta.gap = true],
+    ['BITRATE', (_, arg) => _.meta.bitrate = parseDecimalInteger(arg!)],
     ['DEFINE', (_, arg) => (_.m3u8.defines ??= []).push(new AttrList(arg))],
     ['PART-INF', (_, arg) => _.m3u8.part_info = new AttrList(arg)],
     ['PART', (_, arg) => (_.meta.parts ??= []).push(new AttrList(arg))],

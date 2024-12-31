@@ -640,6 +640,14 @@ describe('M3U8Playlist', () => {
             expect(mainIndex.data.get('com.example.title')![1].get('value', 'string')).to.equal('Este es un ejemplo');
         });
 
+        it('segment bitrate info', () => {
+
+            expect(testIndexLl.segments[0].bitrate).to.not.exist();
+            expect(testIndexLl.segments[1].bitrate).to.equal(123);
+            expect(testIndexLl.segments[2].bitrate).to.not.exist();
+            expect(testIndexLl.getSegment(testIndexLl.lastMsn(false), true)!.bitrate).to.equal(123);
+        });
+
         it('segment gap info', () => {
 
             expect(testIndexSingle.segments[0].gap).to.not.exist();

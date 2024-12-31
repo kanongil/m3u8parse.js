@@ -17,6 +17,7 @@ export class MediaSegment implements IRewritableUris {
     byterange?: Byterange;
     map?: AttrList<AttrT.Map>;
     gap?: boolean;
+    bitrate?: number;
     parts?: AttrList<AttrT.Part>[];
 
     vendor?: Iterable<[string, string | null]>;
@@ -60,6 +61,10 @@ export class MediaSegment implements IRewritableUris {
 
         if (version! >= 5 && meta.map) {
             this.map = new AttrList<AttrT.Map>(meta.map);
+        }
+
+        if (meta.bitrate) {
+            this.bitrate = meta.bitrate;
         }
 
         if (meta.gap) {

@@ -186,6 +186,10 @@ export class PlaylistWriter {
             }
         }
 
+        if (segment.bitrate !== undefined) {
+            this._ext('BITRATE', segment.bitrate);
+        }
+
         this._ext('MAP', stringifyAttrs(segment.map));
 
         if (segment.byterange?.length || segment.byterange?.length === 0) {

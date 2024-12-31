@@ -435,6 +435,11 @@ export class MediaPlaylist extends BasePlaylist implements IRewritableUris {
         return this._lastSegmentProperty('map', msn);
     }
 
+    bitrateForMsn(msn: Msn | bigint): number | undefined {
+
+        return this._lastSegmentProperty('bitrate', msn);
+    }
+
     getSegment(msn: Msn | bigint, independent?: false): ImmutableMediaSegment | null;
     getSegment(msn: Msn | bigint, independent: true): IndependentSegment | null;
 
@@ -461,6 +466,10 @@ export class MediaPlaylist extends BasePlaylist implements IRewritableUris {
 
         if (this.version >= 5) {
             segment.map = this.mapForMsn(msn);
+        }
+
+        if (this.version >= 8) {
+            segment.bitrate = this.bitrateForMsn(msn);
         }
 
         // Resolve relative byteranges in parts
