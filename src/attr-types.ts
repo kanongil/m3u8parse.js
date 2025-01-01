@@ -12,29 +12,48 @@ export interface Byterange {
     length: number;
 }
 
+/** @see Spec {@link https://datatracker.ietf.org/doc/html/draft-pantos-hls-rfc8216bis-16#section-4.2 Attribute Lists} */
 export enum Attr {
+    /** Spec `decimal-integer` as `bigint` */
     BigInt = 'bigint',
-    HexInt = 'hexint',
+
+    /** Spec `decimal-integer` as `number` */
     Int = 'int',
+
+    /** Spec `hexadecimal-sequence` as `bigint` */
+    HexInt = 'hexint',
+
+    /** Spec `hexadecimal-sequence` as `number` */
     HexNo = 'hexno',
+
+    /** Spec `enumerated-string` as `string` */
     Enum = 'enum',
+
+    /** Spec `quoted-string` as `string` */
     String = 'string',
+
+    /** Spec `decimal-floating-point` as `float` */
     Float = 'float',
+
+    /** Spec `signed-decimal-floating-point` as `float` */
     SignedFloat = 'signed-float',
+
+    /** Spec `decimal-resolution` as {@link Resolution} */
     Resolution = 'resolution',
-    /* unofficial type */
+
+    /** Inferred type as {@link Byterange} */
     Byterange = 'byterange'
 }
 
 // Shared
 
-/** {@link https://datatracker.ietf.org/doc/html/draft-pantos-hls-rfc8216bis-16#section-4.4.2.2|`EXT-X-START`} attributes */
+/** {@link https://datatracker.ietf.org/doc/html/draft-pantos-hls-rfc8216bis-16#section-4.4.2.2 `EXT-X-START`} attributes */
 export type Start = {
     'time-offset': Attr.SignedFloat;
     precise?: Attr.Enum;
 };
 
-/** {@link https://datatracker.ietf.org/doc/html/draft-pantos-hls-rfc8216bis-16#section-4.4.2.3|`EXT-X-DEFINE`} attributes */
+/** {@link https://datatracker.ietf.org/doc/html/draft-pantos-hls-rfc8216bis-16#section-4.4.2.3 `EXT-X-DEFINE`} attributes */
 export type Define = {
     name?: Attr.String;
     value?: Attr.String;
@@ -45,12 +64,12 @@ export type Define = {
 // Media
 
 
-/** {@link https://datatracker.ietf.org/doc/html/draft-pantos-hls-rfc8216bis-16#section-4.4.3.7|`EXT-X-PART-INF`} attributes */
+/** {@link https://datatracker.ietf.org/doc/html/draft-pantos-hls-rfc8216bis-16#section-4.4.3.7 `EXT-X-PART-INF`} attributes */
 export type PartInf = {
     'part-target': Attr.Float;
 };
 
-/** {@link https://datatracker.ietf.org/doc/html/draft-pantos-hls-rfc8216bis-16#section-4.4.3.8|`EXT-X-SERVER-CONTROL`} attributes */
+/** {@link https://datatracker.ietf.org/doc/html/draft-pantos-hls-rfc8216bis-16#section-4.4.3.8 `EXT-X-SERVER-CONTROL`} attributes */
 export type ServerControl = {
     'can-skip-until'?: Attr.Float;
     'can-skip-dateranges'?: Attr.Float;
@@ -61,9 +80,7 @@ export type ServerControl = {
 
 // Media Segment
 
-type SegmentAttrs = Key | Map | Part | Daterange | Skip | PreloadHint | RenditionReport;
-
-/** {@link https://datatracker.ietf.org/doc/html/draft-pantos-hls-rfc8216bis-16#section-4.4.4.4|`EXT-X-KEY`} attributes */
+/** {@link https://datatracker.ietf.org/doc/html/draft-pantos-hls-rfc8216bis-16#section-4.4.4.4 `EXT-X-KEY`} attributes */
 export type Key = {
     method: Attr.Enum;
     uri?: Attr.String;
@@ -72,13 +89,13 @@ export type Key = {
     keyformatversions?: Attr.String;
 };
 
-/** {@link https://datatracker.ietf.org/doc/html/draft-pantos-hls-rfc8216bis-16#section-4.4.4.5|`EXT-X-MAP`} attributes */
+/** {@link https://datatracker.ietf.org/doc/html/draft-pantos-hls-rfc8216bis-16#section-4.4.4.5 `EXT-X-MAP`} attributes */
 export type Map = {
     uri: Attr.String;
     byterange?: Attr.Byterange | Attr.Enum;
 };
 
-/** {@link https://datatracker.ietf.org/doc/html/draft-pantos-hls-rfc8216bis-16#section-4.4.4.9|`EXT-X-PART`} attributes */
+/** {@link https://datatracker.ietf.org/doc/html/draft-pantos-hls-rfc8216bis-16#section-4.4.4.9 `EXT-X-PART`} attributes */
 export type Part = {
     uri: Attr.String;
     duration: Attr.Float;
@@ -87,8 +104,13 @@ export type Part = {
     gap?: Attr.Enum;
 };
 
-/** {@link https://datatracker.ietf.org/doc/html/draft-pantos-hls-rfc8216bis-16#section-4.4.5.1|`EXT-X-DATERANGE`} attributes */
-export type Daterange = {
+type SchemaValidate<T extends { [key: string]: Attr }> = {
+    [Prop in keyof T]: Prop extends `x-${string}` ? T[Prop] : never
+};
+
+/** {@link https://datatracker.ietf.org/doc/html/draft-pantos-hls-rfc8216bis-16#section-4.4.5.1 `EXT-X-DATERANGE`} attributes */
+// eslint-disable-next-line @typescript-eslint/ban-types
+export type Daterange<Schema extends SchemaValidate<{}> = {}> = {
     id: Attr.String;
     class?: Attr.String;
     'start-date': Attr.String;
@@ -101,15 +123,36 @@ export type Daterange = {
     'scte-in'?: Attr.HexInt | Attr.HexNo;
     'scte-out'?: Attr.HexInt | Attr.HexNo;
     'end-on-next'?: Attr.Enum;
-};
+} & Schema;
 
-/** {@link https://datatracker.ietf.org/doc/html/draft-pantos-hls-rfc8216bis-16#section-4.4.5.2|`EXT-X-SKIP`} attributes */
+// eslint-disable-next-line @typescript-eslint/no-namespace, @typescript-eslint/no-redeclare
+export namespace Daterange {
+
+    /**
+     * `class: "com.apple.hls.interstitial"`
+     *
+     * @see {@link https://datatracker.ietf.org/doc/html/draft-pantos-hls-rfc8216bis-16#appendix-D.2 `EXT-X-DATERANGE` interstitial}
+     */
+    export type Interstitial = {
+        'x-asset-uri'?: Attr.String;
+        'x-asset-list'?: Attr.String;
+        'x-resume-offset'?: Attr.SignedFloat;
+        'x-playout-limit'?: Attr.Float;
+        'x-snap'?: Attr.String;
+        'x-restrict'?: Attr.String;
+        'x-content-may-vary'?: Attr.String;
+        'x-timeline-occupies'?: Attr.String;
+        'x-timeline-style'?: Attr.String;
+    };
+}
+
+/** {@link https://datatracker.ietf.org/doc/html/draft-pantos-hls-rfc8216bis-16#section-4.4.5.2 `EXT-X-SKIP`} attributes */
 export type Skip = {
     'skipped-segments': Attr.BigInt | Attr.Int;
     'recently-removed-dateranges'?: Attr.String;
 };
 
-/** {@link https://datatracker.ietf.org/doc/html/draft-pantos-hls-rfc8216bis-16#section-4.4.5.3|`EXT-X-PRELOAD-HINT`} attributes */
+/** {@link https://datatracker.ietf.org/doc/html/draft-pantos-hls-rfc8216bis-16#section-4.4.5.3 `EXT-X-PRELOAD-HINT`} attributes */
 export type PreloadHint = {
     type: Attr.Enum;
     uri: Attr.String;
@@ -117,7 +160,7 @@ export type PreloadHint = {
     'byterange-length'?: Attr.BigInt | Attr.Int;
 };
 
-/** {@link https://datatracker.ietf.org/doc/html/draft-pantos-hls-rfc8216bis-16#section-4.4.5.4|`EXT-X-RENDITION-REPORT`} attributes */
+/** {@link https://datatracker.ietf.org/doc/html/draft-pantos-hls-rfc8216bis-16#section-4.4.5.4 `EXT-X-RENDITION-REPORT`} attributes */
 export type RenditionReport = {
     uri: Attr.String;
     'last-msn': Attr.BigInt | Attr.Int;
@@ -126,7 +169,7 @@ export type RenditionReport = {
 
 // Multivariant / Main
 
-/** {@link https://datatracker.ietf.org/doc/html/draft-pantos-hls-rfc8216bis-16#section-4.4.6.1|`EXT-X-MEDIA`} attributes */
+/** {@link https://datatracker.ietf.org/doc/html/draft-pantos-hls-rfc8216bis-16#section-4.4.6.1 `EXT-X-MEDIA`} attributes */
 export type Media = {
     type: Attr.Enum;
     uri?: Attr.String;
@@ -145,7 +188,7 @@ export type Media = {
     channels?: Attr.String;
 };
 
-/** {@link https://datatracker.ietf.org/doc/html/draft-pantos-hls-rfc8216bis-16#section-4.4.6.2|`EXT-X-STREAM-INF`} attributes */
+/** {@link https://datatracker.ietf.org/doc/html/draft-pantos-hls-rfc8216bis-16#section-4.4.6.2 `EXT-X-STREAM-INF`} attributes */
 export type StreamInf = {
     bandwidth: Attr.Int | Attr.BigInt;
     'average-bandwidth'?: Attr.Int | Attr.BigInt;
@@ -166,12 +209,12 @@ export type StreamInf = {
     'pathway-id'?: Attr.String;
 };
 
-/** {@link https://datatracker.ietf.org/doc/html/draft-pantos-hls-rfc8216bis-16#section-4.4.6.3|`EXT-X-I-FRAME-STREAM-INF`} attributes */
+/** {@link https://datatracker.ietf.org/doc/html/draft-pantos-hls-rfc8216bis-16#section-4.4.6.3 `EXT-X-I-FRAME-STREAM-INF`} attributes */
 export type IFrameStreamInf = Omit<StreamInf, 'frame-rate' | 'audio' | 'subtitles' | 'closed-captions'> & {
     uri: Attr.String;
 };
 
-/** {@link https://datatracker.ietf.org/doc/html/draft-pantos-hls-rfc8216bis-16#section-4.4.6.4|`EXT-X-SESSION-DATA`} attributes */
+/** {@link https://datatracker.ietf.org/doc/html/draft-pantos-hls-rfc8216bis-16#section-4.4.6.4 `EXT-X-SESSION-DATA`} attributes */
 export type SessionData = {
     'data-id': Attr.String;
     value?: Attr.String;
@@ -180,10 +223,10 @@ export type SessionData = {
     language?: Attr.String;
 };
 
-/** {@link https://datatracker.ietf.org/doc/html/draft-pantos-hls-rfc8216bis-16#section-4.4.6.5|`EXT-X-SESSION-KEY`} attributes */
+/** {@link https://datatracker.ietf.org/doc/html/draft-pantos-hls-rfc8216bis-16#section-4.4.6.5 `EXT-X-SESSION-KEY`} attributes */
 export type SessionKey = Key;
 
-/** {@link https://datatracker.ietf.org/doc/html/draft-pantos-hls-rfc8216bis-16#section-4.4.6.6|`EXT-X-CONTENT-STEERING`} attributes */
+/** {@link https://datatracker.ietf.org/doc/html/draft-pantos-hls-rfc8216bis-16#section-4.4.6.6 `EXT-X-CONTENT-STEERING`} attributes */
 export type ContentSteering = {
     'server-uri': Attr.String;
     'pathway-id'?: Attr.String;
