@@ -108,6 +108,12 @@ describe('M3U8Parse', () => {
         const stream = Fs.createReadStream(Path.join(fixtureDir, 'empty.m3u8'));
         await expect(M3U8Parse(stream)).to.reject(ParserError);
     });
+
+    it('throws a ParserError for duplicate attribute list keys', () => {
+
+        const err = expect(() => M3U8Parse('#EXTM3U\n#EXT-X-SKIP:ABC=1,ABC=2')).to.throw(ParserError, 'Ext parsing failed');
+        expect(err.cause).to.be.an.error('Duplicate attribute key: abc');
+    });
 });
 
 describe('M3U8Playlist', () => {

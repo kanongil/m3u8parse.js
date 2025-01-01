@@ -177,7 +177,7 @@ export class M3U8Parser {
 
         if (this.lineNo === 1) {
             if (line !== '#EXTM3U') {
-                throw new ParserError('Missing required #EXTM3U header', line, this.lineNo);
+                throw new ParserError('Missing required #EXTM3U header', { line, line_no: this.lineNo });
             }
 
             return;
@@ -196,8 +196,13 @@ export class M3U8Parser {
             const cmd = matches[1];
             const arg = matches[2].length > 1 ? matches[2].slice(1) : null;
 
-            if (!this._parseExt(cmd, arg)) {
-                return this.debug('ignoring unknown #EXT:' + cmd, this.lineNo);
+            try {
+                if (!this._parseExt(cmd, arg)) {
+                    return this.debug('ignoring unknown #EXT:' + cmd, this.lineNo);
+                }
+            }
+            catch (err) {
+                throw new ParserError('Ext parsing failed', { line, line_no: this.lineNo, cause: err });
             }
         }
         else if (state.m3u8.master) {
@@ -207,7 +212,7 @@ export class M3U8Parser {
         }
         else {
             if (!('duration' in state.meta)) {
-                throw new ParserError('Missing #EXTINF before media file URI', line, this.lineNo);
+                throw new ParserError('Missing #EXTINF before media file URI', { line, line_no: this.lineNo });
             }
 
             (state.m3u8.segments ??= []).push(new MediaSegment(line, state.meta, state.m3u8.version));
@@ -239,7 +244,7 @@ export class M3U8Parser {
                 state.meta.title = title.join(',');
 
                 if (state.meta.duration <= 0) {
-                    throw new ParserError('Invalid duration', '#EXTINF:' + arg, this.lineNo);
+                    throw new Error('Invalid duration');
                 }
 
                 return true;
@@ -267,15 +272,16 @@ export class ParserError extends Error {
 
     readonly name = 'ParserError';
 
+    cause: any;
     line: string;
     lineNumber: number;
 
     // eslint-disable-next-line @typescript-eslint/ban-types
-    constructor(msg: string, line?: string, line_no?: number, constr?: Function) {
+    constructor(msg: string, options?: { line?: string; line_no?: number; cause?: unknown }) {
 
-        super(msg ?? 'Error');
+        super(msg ?? 'Error', options?.cause ? { cause: options.cause } : undefined);
 
-        this.line = line ?? '';
-        this.lineNumber = line_no ?? -1;
+        this.line = options?.line ?? '';
+        this.lineNumber = options?.line_no ?? -1;
     }
 }
