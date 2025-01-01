@@ -42,6 +42,16 @@ const serialize: Record<Attr, (value: any) => string> = {
         return value.toString();
     },
 
+    [Attr.List](value: readonly string[]): string {
+
+        try {
+            return serialize[Attr.String]([...value].join(','));
+        }
+        catch (err) {
+            return '"<INVALID INPUT>"';
+        }
+    },
+
     [Attr.Resolution](value: Resolution): string {
 
         // eslint-disable-next-line @typescript-eslint/no-non-null-asserted-optional-chain

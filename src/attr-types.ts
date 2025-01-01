@@ -29,6 +29,9 @@ export enum Attr {
     /** Spec `enumerated-string` as `string` */
     Enum = 'enum',
 
+    /** Spec `enumerated-string-list` as `string[]` */
+    List = 'list',
+
     /** Spec `quoted-string` as `string` */
     String = 'string',
 
@@ -114,11 +117,11 @@ export type Daterange<Schema extends SchemaValidate<{}> = {}> = {
     id: Attr.String;
     class?: Attr.String;
     'start-date': Attr.String;
-    cue?: Attr.String;               // TODO: support enumerated-string-list
+    cue?: Attr.List;
     'end-date'?: Attr.String;
     duration?: Attr.Float;
     'planned-duration'?: Attr.Float;
-    // 'x-<client-attribute>'     // FIXME: unsupported
+    // 'x-<client-attribute>'                  // Supported using Schema
     'scte35-cmd'?: Attr.HexInt | Attr.HexNo;
     'scte-in'?: Attr.HexInt | Attr.HexNo;
     'scte-out'?: Attr.HexInt | Attr.HexNo;
@@ -138,8 +141,8 @@ export namespace Daterange {
         'x-asset-list'?: Attr.String;
         'x-resume-offset'?: Attr.SignedFloat;
         'x-playout-limit'?: Attr.Float;
-        'x-snap'?: Attr.String;
-        'x-restrict'?: Attr.String;
+        'x-snap'?: Attr.List;
+        'x-restrict'?: Attr.List;
         'x-content-may-vary'?: Attr.String;
         'x-timeline-occupies'?: Attr.String;
         'x-timeline-style'?: Attr.String;

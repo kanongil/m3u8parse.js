@@ -288,6 +288,12 @@ describe('AttrList', () => {
             expect(new AttrList('ENUM=OK').get('ENUM', 'enum')).to.equal('OK');
         });
 
+        it('parses valid Attr.List attribute', () => {
+
+            expect(new AttrList('LIST="ABC,DEF"').get('LIST', 'list')).to.equal(['ABC', 'DEF']);
+            expect(new AttrList('LIST=""').get('LIST', 'list')).to.equal(['']);
+        });
+
         it('parses exotic enumeratedString attribute', () => {
 
             expect(new AttrList('ENUM=1').get('ENUM', 'enum')).to.equal('1');
@@ -458,6 +464,21 @@ describe('AttrList', () => {
             expect(encode(AttrType.Enum, '1')).to.equal('1');
             expect(encode(AttrType.Enum, 'A=B')).to.equal('A=B');
             expect(encode(AttrType.Enum, 'A=B=C')).to.equal('A=B=C');
+        });
+
+        it('encodes valid AttrType.List attribute', () => {
+
+            expect(encode(AttrType.List, ['ABC','DEF'])).to.equal('"ABC,DEF"');
+            expect(encode(AttrType.List, [' '])).to.equal('" "');
+            expect(encode(AttrType.List, [])).to.equal('""');
+        });
+
+        it('encodes exotic AttrType.List attribute', () => {
+
+            expect(encode(AttrType.List, [false, 123, {}])).to.equal('"false,123,[object Object]"');
+            expect(encode(AttrType.List, [null, undefined])).to.equal('","');
+            expect(encode(AttrType.List, 'abc')).to.equal('"a,b,c"');
+            expect(encode(AttrType.List, 0)).to.equal('"<INVALID INPUT>"');
         });
 
         it('encodes valid AttrType.Resolution attribute', () => {

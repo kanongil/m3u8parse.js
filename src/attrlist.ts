@@ -15,7 +15,8 @@ type TypeMapping<T extends Attr> =
             T extends Enum<Attr.Enum | Attr.String> ? string :
                 T extends Enum<Attr.Resolution> ? Resolution :
                     T extends Enum<Attr.Byterange> ? Byterange :
-                        never;
+                        T extends Enum<Attr.List> ? string[] :
+                            never;
 
 const tokenify = function <T extends string>(attr: T): T {
 

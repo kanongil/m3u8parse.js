@@ -64,6 +64,12 @@ const deserialize: Record<Attr, (stringValue: string) => any> = {
         return stringValue;
     },
 
+    [Attr.List](stringValue): string[] {
+
+        const list = deserialize[Attr.String](stringValue);
+        return list.split(',');
+    },
+
     [Attr.Resolution](stringValue): Resolution | undefined {
 
         const res = /^(\d+)x(\d+)$/.exec(stringValue);
