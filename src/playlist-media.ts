@@ -24,11 +24,11 @@ enum ArrayMetas {
 
 interface Meta {
 
-    /** @see {@link https://datatracker.ietf.org/doc/html/draft-pantos-hls-rfc8216bis-16#section-4.4.5.2|`#EXT-X-SKIP`} */
-    skip?: AttrList<AttrT.Skip>;
-
     /** @see {@link https://datatracker.ietf.org/doc/html/draft-pantos-hls-rfc8216bis-16#section-4.4.5.1|`#EXT-X-DATERANGE`} */
     ranges?: AttrList<AttrT.Daterange>[];
+
+    /** @see {@link https://datatracker.ietf.org/doc/html/draft-pantos-hls-rfc8216bis-16#section-4.4.5.2|`#EXT-X-SKIP`} */
+    skip?: AttrList<AttrT.Skip>;
 
     /** @see {@link https://datatracker.ietf.org/doc/html/draft-pantos-hls-rfc8216bis-16#section-4.4.5.3|`#EXT-X-PRELOAD-HINT`} */
     preload_hints?: AttrList<AttrT.PreloadHint>[];
@@ -113,26 +113,26 @@ export class MediaPlaylist extends BasePlaylist implements IRewritableUris {
     /** @see {@link https://datatracker.ietf.org/doc/html/draft-pantos-hls-rfc8216bis-16#section-4.4.3.3|`#EXT-X-DISCONTINUITY-SEQUENCE`} */
     discontinuity_sequence?: Msn;
 
+    /** @see {@link https://datatracker.ietf.org/doc/html/draft-pantos-hls-rfc8216bis-16#section-4.4.3.4|`#EXT-X-ENDLIST`} */
+    ended: boolean;
+
     /** @see {@link https://datatracker.ietf.org/doc/html/draft-pantos-hls-rfc8216bis-16#section-4.4.3.5|`#EXT-X-PLAYLIST-TYPE`} */
     type?: PlaylistType | string;
 
     /** @see {@link https://datatracker.ietf.org/doc/html/draft-pantos-hls-rfc8216bis-16#section-4.4.3.6|`#EXT-X-I-FRAMES-ONLY`} */
     i_frames_only: boolean;
 
-    /** @see {@link https://datatracker.ietf.org/doc/html/draft-pantos-hls-rfc8216bis-16#section-4.4.3.4|`#EXT-X-ENDLIST`} */
-    ended: boolean;
+    /** @see {@link https://datatracker.ietf.org/doc/html/draft-pantos-hls-rfc8216bis-16#section-4.4.3.7|`#EXT-X-PART-INF`} */
+    part_info?: AttrList<AttrT.PartInf>;
+
+    /** @see {@link https://datatracker.ietf.org/doc/html/draft-pantos-hls-rfc8216bis-16#section-4.4.3.8|`#EXT-X-SERVER-CONTROL`} */
+    server_control?: AttrList<AttrT.ServerControl>;
 
     /** Media Segments @see {@link MediaSegment} @see {@link https://datatracker.ietf.org/doc/html/draft-pantos-hls-rfc8216bis-16#section-4.4.4} */
     segments: MediaSegment[];
 
     /** Media Metadata @see {@link Meta } @see {@link https://datatracker.ietf.org/doc/html/draft-pantos-hls-rfc8216bis-16#section-4.4.5} */
     meta: Meta;
-
-    /** @see {@link https://datatracker.ietf.org/doc/html/draft-pantos-hls-rfc8216bis-16#section-4.4.3.8|`#EXT-X-SERVER-CONTROL`} */
-    server_control?: AttrList<AttrT.ServerControl>;
-
-    /** @see {@link https://datatracker.ietf.org/doc/html/draft-pantos-hls-rfc8216bis-16#section-4.4.3.7|`#EXT-X-PART-INF`} */
-    part_info?: AttrList<AttrT.PartInf>;
 
     constructor(obj?: Proto<MediaPlaylist | ImmutableMediaPlaylist>);
     constructor(obj?: Proto<ImmutableMediaPlaylist> & Legacy) {

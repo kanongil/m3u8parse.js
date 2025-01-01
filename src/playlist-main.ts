@@ -26,11 +26,11 @@ export class MainPlaylist extends BasePlaylist implements IRewritableUris {
 
     readonly master = true as const;
 
-    /** @see {@link https://datatracker.ietf.org/doc/html/draft-pantos-hls-rfc8216bis-16#section-4.4.6.2|`#EXT-X-STREAM-INF`} */
-    variants: Variant[];
-
     /** @see {@link https://datatracker.ietf.org/doc/html/draft-pantos-hls-rfc8216bis-16#section-4.4.6.1|`#EXT-X-MEDIA`} */
     groups: Map<string, AttrList<AttrT.Media>[]>;
+
+    /** @see {@link https://datatracker.ietf.org/doc/html/draft-pantos-hls-rfc8216bis-16#section-4.4.6.2|`#EXT-X-STREAM-INF`} */
+    variants: Variant[];
 
     /** @see {@link https://datatracker.ietf.org/doc/html/draft-pantos-hls-rfc8216bis-16#section-4.4.6.3|`#EXT-X-I-FRAME-STREAM-INF`} */
     iframes: AttrList<AttrT.IFrameStreamInf>[];

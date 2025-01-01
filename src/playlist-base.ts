@@ -127,11 +127,11 @@ export class BasePlaylist {
     /** @see {@link https://datatracker.ietf.org/doc/html/draft-pantos-hls-rfc8216bis-16#section-4.4.1.2|`#EXT-X-VERSION`} */
     version: number;
 
-    /** @see {@link https://datatracker.ietf.org/doc/html/draft-pantos-hls-rfc8216bis-16#section-4.4.2.2|`#EXT-X-START`} */
-    start?: AttrList<AttrT.Start>;
-
     /** @see {@link https://datatracker.ietf.org/doc/html/draft-pantos-hls-rfc8216bis-16#section-4.4.2.1|`#EXT-X-INDEPENDENT-SEGMENTS`} */
     independent_segments?: boolean;
+
+    /** @see {@link https://datatracker.ietf.org/doc/html/draft-pantos-hls-rfc8216bis-16#section-4.4.2.2|`#EXT-X-START`} */
+    start?: AttrList<AttrT.Start>;
 
     /** @see {@link https://datatracker.ietf.org/doc/html/draft-pantos-hls-rfc8216bis-16#section-4.4.2.3|`#EXT-X-DEFINE`} */
     defines: AttrList<AttrT.Define>[];
