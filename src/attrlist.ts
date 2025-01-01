@@ -60,7 +60,12 @@ export class AttrList<E extends TAnyAttr = TAnyAttr> extends Map<StringKeys<E>, 
             let match;
 
             while ((match = re.exec(attrs)) !== null) {
-                set(tokenify(match[1]), match[2]);
+                const attr = tokenify(match[1]);
+                if (super.has(attr as any)) {
+                    throw new Error('Duplicate attribute key: ' + attr);
+                }
+
+                set(tokenify(attr), match[2]);
             }
         }
         else if (!(attrs instanceof Map) && !Array.isArray(attrs)) {

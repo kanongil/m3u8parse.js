@@ -390,6 +390,14 @@ describe('AttrList', () => {
             expect(list.get('VAL', 'int')).to.equal(Infinity);
             expect(list.get('HEX', 'hexno')).to.equal(Infinity);
         });
+
+        it('throws on duplicate attribute keys', () => {
+
+            expect(() => {
+
+                new AttrList('VAL=1,VAL=2');
+            }).to.throw();
+        });
     });
 
     describe('encoding', () => {
