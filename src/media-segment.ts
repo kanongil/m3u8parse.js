@@ -2,24 +2,44 @@ import type * as AttrT from './attr-types.js';
 
 import { AttrList, Byterange } from './attrlist.js';
 import { cloneAttrArray, IRewritableUris, isStringish, rewriteAttr, rewriteAttrs, UriMapFunction } from './playlist-base.js';
-import { Proto } from './types.js';
-
+import type { Proto } from './types.js';
 
 export class MediaSegment implements IRewritableUris {
 
-    duration?: number;
-    title?: string;
+    /* Segment URI */
     uri?: string;
+
+    /** @see {@link https://datatracker.ietf.org/doc/html/draft-pantos-hls-rfc8216bis-16#section-4.4.4.1|`#EXTINF`} */
+    duration?: number;
+
+    /** @see {@link https://datatracker.ietf.org/doc/html/draft-pantos-hls-rfc8216bis-16#section-4.4.4.1|`#EXTINF`} */
+    title?: string;
+
+    /** @see {@link https://datatracker.ietf.org/doc/html/draft-pantos-hls-rfc8216bis-16#section-4.4.4.3|`#EXT-X-DISCONTINUITY`} */
     discontinuity: boolean;
 
+    /** @see {@link https://datatracker.ietf.org/doc/html/draft-pantos-hls-rfc8216bis-16#section-4.4.4.6|`#EXT-X-PROGRAM-DATE-TIME`} */
     program_time?: Date | null;
+
+    /** @see {@link https://datatracker.ietf.org/doc/html/draft-pantos-hls-rfc8216bis-16#section-4.4.4.4|`#EXT-X-KEY`} */
     keys?: AttrList<AttrT.Key>[];
+
+    /** @see {@link https://datatracker.ietf.org/doc/html/draft-pantos-hls-rfc8216bis-16#section-4.4.4.2|`#EXT-X-BYTERANGE`} */
     byterange?: Byterange;
+
+    /** @see {@link https://datatracker.ietf.org/doc/html/draft-pantos-hls-rfc8216bis-16#section-4.4.4.5|`#EXT-X-MAP`} */
     map?: AttrList<AttrT.Map>;
+
+    /** @see {@link https://datatracker.ietf.org/doc/html/draft-pantos-hls-rfc8216bis-16#section-4.4.4.7|`#EXT-X-GAP`} */
     gap?: boolean;
+
+    /** @see {@link https://datatracker.ietf.org/doc/html/draft-pantos-hls-rfc8216bis-16#section-4.4.4.8|`#EXT-X-BITRATE`} */
     bitrate?: number;
+
+    /** @see {@link https://datatracker.ietf.org/doc/html/draft-pantos-hls-rfc8216bis-16#section-4.4.4.9|`#EXT-X-PART`} */
     parts?: AttrList<AttrT.Part>[];
 
+    /** Custom vendor-defined properties */
     vendor?: Iterable<[string, string | null]>;
 
     constructor(obj?: Proto<MediaSegment>);
