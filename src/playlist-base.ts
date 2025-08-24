@@ -22,7 +22,7 @@ export type Immutify<T> =
                         T;
 
 
-export const cloneAttrArray = function <T extends TAnyAttr>(src?: readonly ImmutableAttrList<T>[]) {
+export const cloneAttrArray = function <T extends TAnyAttr> (src?: readonly ImmutableAttrList<T>[]) {
 
     const dst: AttrList<T>[] = [];
     for (const entry of src ?? []) {
@@ -53,7 +53,7 @@ const isIterable = function (x: any): x is Iterable<any> {
     return !!x?.[Symbol.iterator];
 };
 
-export const cloneAttrMap = function <T extends TAnyAttr>(src?: Iterable<[string, readonly ImmutableAttrList<T>[]]> | { [key: string]: readonly ImmutableAttrList<T>[] }): Map<string, AttrList<T>[]> {
+export const cloneAttrMap = function <T extends TAnyAttr> (src?: Iterable<[string, readonly ImmutableAttrList<T>[]]> | { [key: string]: readonly ImmutableAttrList<T>[] }): Map<string, AttrList<T>[]> {
 
     const dst = new JSONableMap();
 

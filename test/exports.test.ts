@@ -1,18 +1,12 @@
 import { expect } from '@hapi/code';
-import Lab from '@hapi/lab';
+import { describe, it } from 'mocha';
 
 import * as M3U8Parse from 'm3u8parse';
 import * as AttrList from 'm3u8parse/attrlist';
 import * as Playlist from 'm3u8parse/playlist';
 
 
-// Test shortcuts
-
-export const lab = Lab.script();
-const { describe } = lab;
-
-
-describe('has required exports for', () => {
+it('has required exports for', () => {
 
     describe('M3U8Parse', () => {
 

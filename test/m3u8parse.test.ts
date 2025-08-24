@@ -2,17 +2,12 @@ import Fs from 'fs';
 import Path from 'path';
 import { fileURLToPath } from 'url';
 
-import Code from '@hapi/code';
-import Lab from '@hapi/lab';
+import { expect } from '@hapi/code';
+import { describe, it, before } from 'mocha';
+
 import M3U8Parse, { MainPlaylist, MediaPlaylist, MediaSegment, AttrList, ParserError } from '../lib/index.node.js';
 
 const fixtureDir = fileURLToPath(new URL('../test/fixtures', import.meta.url));
-
-// Test shortcuts
-
-export const lab = Lab.script();
-const { describe, it, before } = lab;
-const { expect } = Code;
 
 
 describe('M3U8Parse', () => {

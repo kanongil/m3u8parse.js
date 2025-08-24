@@ -1,3 +1,4 @@
+import { globalIgnores } from 'eslint/config';
 import Eslint from '@eslint/js';
 import TsEslint from 'typescript-eslint';
 
@@ -26,6 +27,7 @@ const tsifyConfig = function (from) {
 };
 
 export default TsEslint.config(
+    globalIgnores(['lib/**', 'test/**.js', 'test/**.cjs', 'test/**.mjs', 'test/fixtures/**']),
     Eslint.configs.recommended,
     TsEslint.configs.eslintRecommended,
     EslintPluginHapi.configs.recommended,

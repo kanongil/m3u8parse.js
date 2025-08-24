@@ -7,10 +7,13 @@
   "type": "module",
   "scripts": {
     "clean": "tsc -b tsconfig.*.json test --clean; rm -Rf ./coverage",
+    "mocha": "mocha -R dot --check-leaks 'test/*.test.ts'",
+    "lint": "eslint",
     "postpack": "npm run clean",
     "prepack": "npm run clean && tsc -b tsconfig.publish.json --force",
-    "test": "tsc -b test && c8 --check-coverage lab",
-    "test-cov-html": "tsc -b test && c8 -r html lab"
+    "pretest": "concurrently 'eslint' 'tsc -b test'",
+    "test": "c8 --check-coverage npm run mocha",
+    "test-cov-html": "tsc -b test && c8 -r html npm run mocha"
   },
   "keywords": [
     "hls",
@@ -41,13 +44,15 @@
     "@eslint/js": "^9.34.0",
     "@hapi/code": "^9.0.1",
     "@hapi/eslint-plugin": "^7.0.0",
-    "@hapi/lab": "^26.0.0",
+    "@types/mocha": "^10.0.10",
     "@types/node": "^18.14.0",
     "@typescript-eslint/eslint-plugin": "^8.40.0",
     "@typescript-eslint/parser": "^8.40.0",
     "c8": "^10.1.3",
+    "concurrently": "^9.2.0",
     "eslint": "^9.34.0",
     "m3u8parse": "file:.",
+    "mocha": "^11.7.1",
     "typescript": "~5.9.2",
     "typescript-eslint": "^8.40.0"
   },

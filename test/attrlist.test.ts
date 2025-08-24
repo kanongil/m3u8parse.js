@@ -1,14 +1,7 @@
 import { expect } from '@hapi/code';
-import Lab from '@hapi/lab';
+import { describe, it } from 'mocha';
 
 import { AttrList, AttrType } from '../lib/attrlist.js';
-
-
-// Test shortcuts
-
-export const lab = Lab.script();
-const { before, describe, it } = lab;
-
 
 describe('AttrList', () => {
 
@@ -84,6 +77,7 @@ describe('AttrList', () => {
 
     describe('method', () => {
 
+        const list = new AttrList('BIGINT=42,HEXINT=0x42,INT=42,HEXNO=0x42,FLOAT=0.42,SIGNED-FLOAT=-0.42,STRING="hi",ENUM=OK,RESOLUTION=4x2,BYTERANGE="20@10"');
         const types: [any, any][] = [
             ['bigint', BigInt(42)],
             ['hexint', BigInt(66)],
@@ -97,17 +91,9 @@ describe('AttrList', () => {
             ['byterange', { offset: 10, length: 20 }]
         ];
 
-        type Context = { list?: AttrList };
-        type TestArg = Lab.script.Flags & { context: Context };
-
-        before(({ context }: TestArg) => {
-
-            context.list = new AttrList('BIGINT=42,HEXINT=0x42,INT=42,HEXNO=0x42,FLOAT=0.42,SIGNED-FLOAT=-0.42,STRING="hi",ENUM=OK,RESOLUTION=4x2,BYTERANGE="20@10"');
-        });
-
         describe('#get()', () => {
 
-            it('handles all known types', ({ context: { list } }: TestArg) => {
+            it('handles all known types', () => {
 
                 for (const [type, value] of types) {
                     expect(list!.get(type, type as 'enum')).to.equal(value);
@@ -116,18 +102,18 @@ describe('AttrList', () => {
 
             it('returns "undefined" when attr is not present', () => {
 
-                const list = new AttrList();
+                const empty = new AttrList();
                 for (const [type] of types) {
-                    expect(list!.get(type, type as 'enum')).to.be.undefined();
+                    expect(empty!.get(type, type as 'enum')).to.be.undefined();
                 }
             });
 
-            it('fails on unknown types', ({ context: { list } }: TestArg) => {
+            it('fails on unknown types', () => {
 
                 expect(() => list!.get('int', 'b' as 'enum')).to.throw('Invalid type: b');
             });
 
-            it('fails on non-string attributes', ({ context: { list } }: TestArg) => {
+            it('fails on non-string attributes', () => {
 
                 expect(() => list!.get(undefined as any)).to.throw('Attributes must be a "string"');
                 expect(() => list!.get({} as any)).to.throw('Attributes must be a "string"');
@@ -137,7 +123,7 @@ describe('AttrList', () => {
 
         describe('#set()', () => {
 
-            it('handles all known types', ({ context: { list } }: TestArg) => {
+            it('handles all known types', () => {
 
                 const attrs = new AttrList();
                 for (const [type, value] of types) {
@@ -147,7 +133,7 @@ describe('AttrList', () => {
                 expect(attrs).to.equal(list!);
             });
 
-            it('fails on unknown types', ({ context: { list } }: TestArg) => {
+            it('fails on unknown types', () => {
 
                 expect(() => list!.set('int', 42, 'b' as 'int')).to.throw('Invalid type: b');
             });
@@ -175,7 +161,7 @@ describe('AttrList', () => {
                 expect(attrs.get('a')).to.equal('NaN');
             });
 
-            it('deletes attr when null or undefined', ({ context: { list } }: TestArg) => {
+            it('deletes attr when null or undefined', () => {
 
                 expect(list!.has('string')).to.be.true();
                 list!.set('string', null);

@@ -18,7 +18,7 @@ type TypeMapping<T extends Attr> =
                         T extends Enum<Attr.List> ? string[] :
                             never;
 
-const tokenify = function <T extends string>(attr: T): T {
+const tokenify = function <T extends string> (attr: T): T {
 
     if (typeof attr !== 'string') {
         throw new TypeError('Attributes must be a "string"');

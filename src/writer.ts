@@ -6,7 +6,7 @@ import { MediaPlaylist, ImmutableMediaSegment, ImmutableMainPlaylist as Immutabl
 import type { PropsOf } from './types.ts';
 
 
-const stringifyAttrs = function <T extends TAnyAttr>(attrs: ImmutableAttrList<T> | undefined) {
+const stringifyAttrs = function <T extends TAnyAttr> (attrs: ImmutableAttrList<T> | undefined) {
 
     if (attrs === undefined || typeof attrs !== 'object') {
         return undefined;
@@ -19,7 +19,7 @@ const stringifyAttrs = function <T extends TAnyAttr>(attrs: ImmutableAttrList<T>
     return attrs.size > 0 ? attrs.toString() : undefined;
 };
 
-const streamInfAttrs = function <T extends Attr.StreamInf | Attr.IFrameStreamInf>(obj: ImmutableAttrList<T>, version?: number): string {
+const streamInfAttrs = function <T extends Attr.StreamInf | Attr.IFrameStreamInf> (obj: ImmutableAttrList<T>, version?: number): string {
 
     const attrs = new AttrList(obj as ImmutableAttrList);
     if (version! >= 6) {
