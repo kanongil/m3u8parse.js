@@ -1,19 +1,14 @@
 {
+  "extends": "../tsconfig",
   "compilerOptions": {
-    "allowSyntheticDefaultImports": true,
-    "target": "ES2020",
-    "lib": [ "ES2020" ],
-    "module": "Node16",
-    "moduleResolution": "node16",
-    "isolatedModules": true,
+    "rewriteRelativeImportExtensions": false,
+    "inlineSourceMap": true,
     "declaration": false,
-    "strict": true,
-    "strictNullChecks": true,
-    "esModuleInterop": false,
+    "noEmit": false,
     "types": []
   },
   "references": [{
-    "path": "../src/tsconfig.debug.json",
+    "path": "../tsconfig.debug.json",
   }],
   "include": ["*.ts"]
 }

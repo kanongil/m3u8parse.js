@@ -1,14 +1,14 @@
-import type * as AttrT from './attr-types.js';
+import type * as AttrT from './attr-types.ts';
 
-import { AttrList } from './attrlist.js';
-import { BasePlaylist, cloneAttrArray, cloneAttrMap, ImmutableUriMapFunction, Immutify, IRewritableUris, isStringish, rewriteAttrs, rewriteMappedAttrs, UriMapFunction } from './playlist-base.js';
-import { MediaPlaylist } from './playlist-media.js';
-import type { Proto } from './types.js';
+import { AttrList } from './attrlist.ts';
+import { BasePlaylist, cloneAttrArray, cloneAttrMap, ImmutableUriMapFunction, Immutify, IRewritableUris, isStringish, rewriteAttrs, rewriteMappedAttrs, UriMapFunction } from './playlist-base.ts';
+import { MediaPlaylist } from './playlist-media.ts';
+import type { Proto } from './types.ts';
 
 
 interface Variant {
     uri: string;
-    info?: AttrList<AttrT.StreamInf>;
+    info?: AttrList<AttrT.StreamInf> | undefined;
 }
 
 export type EntryType = 'variant' | 'iframe' | 'group' | 'data' | 'session-key';
@@ -24,7 +24,7 @@ export class MainPlaylist extends BasePlaylist implements IRewritableUris {
         return index as MainPlaylist;
     }
 
-    readonly master = true as const;
+    override readonly master = true as const;
 
     /** @see {@link https://datatracker.ietf.org/doc/html/draft-pantos-hls-rfc8216bis-16#section-4.4.6.1 `EXT-X-MEDIA`} */
     groups: Map<string, AttrList<AttrT.Media>[]>;

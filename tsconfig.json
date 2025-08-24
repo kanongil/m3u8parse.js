@@ -1,0 +1,31 @@
+{
+  "compilerOptions": {
+    "allowSyntheticDefaultImports": true,
+    "forceConsistentCasingInFileNames": true,
+    "rewriteRelativeImportExtensions": true,
+    "target": "ES2020",
+    "lib": [ "ES2020", "ES2022.Error" ],
+    "module": "node18",
+    "moduleResolution": "node16",
+    "isolatedModules": true,
+    "strict": true,
+    "strictNullChecks": true,
+    "esModuleInterop": false,
+    "types": [],
+
+    "allowUnusedLabels": false,
+    "allowUnreachableCode": false,
+    "exactOptionalPropertyTypes": true,
+    "noFallthroughCasesInSwitch": true,
+    "noImplicitOverride": true,
+    "noImplicitReturns": true,
+    "noPropertyAccessFromIndexSignature": true,
+    //"noUncheckedIndexedAccess": true,
+    "noUnusedLocals": true,
+    //"noUnusedParameters": true,
+
+    "rootDir": ".",
+    "noEmit": true
+  },
+  "include": ["src/**.ts"]
+}

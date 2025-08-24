@@ -1,8 +1,8 @@
 /// <reference lib="dom" />
 
-import { ImmutableMediaSegment, IndependentSegment, MediaSegment } from './media-segment.js';
-import { ImmutableMainPlaylist, MainPlaylist } from './playlist-main.js';
-import { ImmutableMediaPlaylist, MediaPlaylist } from './playlist-media.js';
+import { ImmutableMediaSegment, IndependentSegment, MediaSegment } from './media-segment.ts';
+import { ImmutableMainPlaylist, MainPlaylist } from './playlist-main.ts';
+import { ImmutableMediaPlaylist, MediaPlaylist } from './playlist-media.ts';
 
 
 export type { ImmutableMainPlaylist, ImmutableMediaPlaylist, ImmutableMediaSegment, IndependentSegment };

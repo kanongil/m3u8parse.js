@@ -1,0 +1,14 @@
+{
+  "extends": "./tsconfig",
+  "compilerOptions": {
+    "sourceMap": false,
+    "declaration": true,
+    "skipLibCheck": false,
+    "noEmit": false,
+
+    "removeComments": true,
+
+    "rootDir": "./src",
+    "outDir": "./lib",
+  },
+}

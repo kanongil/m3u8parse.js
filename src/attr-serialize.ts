@@ -1,4 +1,4 @@
-import { Attr, Byterange, Resolution } from './attr-types.js';
+import { Attr, Byterange, Resolution } from './attr-types.ts';
 
 
 const serialize: Record<Attr, (value: any) => string> = {
@@ -47,14 +47,13 @@ const serialize: Record<Attr, (value: any) => string> = {
         try {
             return serialize[Attr.String]([...value].join(','));
         }
-        catch (err) {
+        catch {
             return '"<INVALID INPUT>"';
         }
     },
 
     [Attr.Resolution](value: Resolution): string {
 
-        // eslint-disable-next-line @typescript-eslint/no-non-null-asserted-optional-chain
         return '' + Math.floor(value?.width!) + 'x' + Math.floor(value?.height!);
     },
 

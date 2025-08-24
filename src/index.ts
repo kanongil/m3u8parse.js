@@ -1,14 +1,14 @@
-import { M3U8Parser, PlaylistType } from './parser.js';
+import { M3U8Parser, PlaylistType } from './parser.ts';
 
-import type { ParserOptions } from './parser.js';
-import type { M3U8Playlist, MainPlaylist, MediaPlaylist } from './playlist.js';
+import type { ParserOptions } from './parser.ts';
+import type { M3U8Playlist, MainPlaylist, MediaPlaylist } from './playlist.ts';
 
-export { AttrList } from './attrlist.js';
-export { ParserError, PlaylistType } from './parser.js';
-export { MainPlaylist, MediaPlaylist, MediaSegment } from './playlist.js';
+export { AttrList } from './attrlist.ts';
+export { ParserError, PlaylistType } from './parser.ts';
+export { MainPlaylist, MediaPlaylist, MediaSegment } from './playlist.ts';
 
-export type { ParserOptions } from './parser.js';
-export type { IndependentSegment, M3U8Playlist } from './playlist.js';
+export type { ParserOptions } from './parser.ts';
+export type { IndependentSegment, M3U8Playlist } from './playlist.ts';
 
 
 export interface ParseOptions extends ParserOptions {

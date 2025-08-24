@@ -1,6 +1,6 @@
-import deserialize from './attr-deserialize.js';
-import serialize from './attr-serialize.js';
-import { Attr, Byterange, Resolution } from './attr-types.js';
+import deserialize from './attr-deserialize.ts';
+import serialize from './attr-serialize.ts';
+import { Attr, Byterange, Resolution } from './attr-types.ts';
 
 export { Attr as AttrType };
 export type { Byterange, Resolution };
@@ -31,7 +31,6 @@ export type TAnyAttr = { [key: string]: Attr };
 
 // AttrList's are handled without any implicit knowledge of key/type mapping
 
-// eslint-disable-next-line @typescript-eslint/ban-types
 export class AttrList<E extends TAnyAttr = TAnyAttr> extends Map<StringKeys<E>, string> {
 
     static readonly Types = Attr;
@@ -57,7 +56,7 @@ export class AttrList<E extends TAnyAttr = TAnyAttr> extends Map<StringKeys<E>, 
 
             // TODO: handle newline escapes in quoted-string's
 
-            const re = /(.+?)=((?:\".*?\")|.*?)(?:,|$)/g;
+            const re = /(.+?)=((?:".*?")|.*?)(?:,|$)/g;
             let match;
 
             while ((match = re.exec(attrs)) !== null) {
@@ -81,9 +80,9 @@ export class AttrList<E extends TAnyAttr = TAnyAttr> extends Map<StringKeys<E>, 
         }
     }
 
-    get(attr: StringKeys<E>): string | undefined;
-    get<K extends StringKeys<E>, T extends E[K]>(attr: K, type: Enum<T>): TypeMapping<T> | undefined;
-    get(attr: StringKeys<E>, type: Enum<Attr> = Attr.Enum): unknown | undefined {
+    override get(attr: StringKeys<E>): string | undefined;
+    override get<K extends StringKeys<E>, T extends E[K]>(attr: K, type: Enum<T>): TypeMapping<T> | undefined;
+    override get(attr: StringKeys<E>, type: Enum<Attr> = Attr.Enum): unknown | undefined {
 
         attr = tokenify(attr);
 
@@ -100,9 +99,9 @@ export class AttrList<E extends TAnyAttr = TAnyAttr> extends Map<StringKeys<E>, 
         return stringValue;
     }
 
-    set(attr: StringKeys<E>, value: undefined | null): this;
-    set<K extends StringKeys<E>, T extends Attr>(attr: K, value: TypeMapping<T>, type?: Enum<E[K]>): this;
-    set(attr: StringKeys<E>, value: unknown, type: Enum<Attr> = Attr.Enum): this {
+    override set(attr: StringKeys<E>, value: undefined | null): this;
+    override set<K extends StringKeys<E>, T extends Attr>(attr: K, value: TypeMapping<T>, type?: Enum<E[K]>): this;
+    override set(attr: StringKeys<E>, value: unknown, type: Enum<Attr> = Attr.Enum): this {
 
         attr = tokenify(attr);
 
@@ -122,17 +121,17 @@ export class AttrList<E extends TAnyAttr = TAnyAttr> extends Map<StringKeys<E>, 
         return this;
     }
 
-    has(attr: StringKeys<E>): boolean {
+    override has(attr: StringKeys<E>): boolean {
 
         return super.has(tokenify(attr));
     }
 
-    delete(attr: StringKeys<E>): boolean {
+    override delete(attr: StringKeys<E>): boolean {
 
         return super.delete(tokenify(attr));
     }
 
-    toString(): string {
+    override toString(): string {
 
         let res = '';
 
@@ -144,7 +143,6 @@ export class AttrList<E extends TAnyAttr = TAnyAttr> extends Map<StringKeys<E>, 
         return res;
     }
 
-    // eslint-disable-next-line @typescript-eslint/ban-types
     toJSON(): object {
 
         const obj = Object.create(null);
@@ -157,5 +155,4 @@ export class AttrList<E extends TAnyAttr = TAnyAttr> extends Map<StringKeys<E>, 
     }
 }
 
-// eslint-disable-next-line @typescript-eslint/no-empty-interface
 export interface ImmutableAttrList<T extends TAnyAttr = TAnyAttr> extends Pick<AttrList<T>, keyof ReadonlyMap<any, any>> {}

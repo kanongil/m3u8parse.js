@@ -1,46 +1,46 @@
-import type * as AttrT from './attr-types.js';
+import type * as AttrT from './attr-types.ts';
 
-import { AttrList, Byterange } from './attrlist.js';
-import { cloneAttrArray, IRewritableUris, isStringish, rewriteAttr, rewriteAttrs, UriMapFunction } from './playlist-base.js';
-import type { Proto } from './types.js';
+import { AttrList, Byterange } from './attrlist.ts';
+import { cloneAttrArray, IRewritableUris, isStringish, rewriteAttr, rewriteAttrs, UriMapFunction } from './playlist-base.ts';
+import type { Proto } from './types.ts';
 
 export class MediaSegment implements IRewritableUris {
 
     /* Segment URI */
-    uri?: string;
+    uri?: string | undefined;
 
     /** @see {@link https://datatracker.ietf.org/doc/html/draft-pantos-hls-rfc8216bis-16#section-4.4.4.1 `#EXTINF`} */
-    duration?: number;
+    duration?: number | undefined;
 
     /** @see {@link https://datatracker.ietf.org/doc/html/draft-pantos-hls-rfc8216bis-16#section-4.4.4.1 `#EXTINF`} */
-    title?: string;
+    title?: string | undefined;
 
     /** @see {@link https://datatracker.ietf.org/doc/html/draft-pantos-hls-rfc8216bis-16#section-4.4.4.3 `#EXT-X-DISCONTINUITY`} */
     discontinuity: boolean;
 
     /** @see {@link https://datatracker.ietf.org/doc/html/draft-pantos-hls-rfc8216bis-16#section-4.4.4.6 `#EXT-X-PROGRAM-DATE-TIME`} */
-    program_time?: Date | null;
+    program_time?: Date | null | undefined;
 
     /** @see {@link https://datatracker.ietf.org/doc/html/draft-pantos-hls-rfc8216bis-16#section-4.4.4.4 `#EXT-X-KEY`} */
-    keys?: AttrList<AttrT.Key>[];
+    keys?: AttrList<AttrT.Key>[] | undefined;
 
     /** @see {@link https://datatracker.ietf.org/doc/html/draft-pantos-hls-rfc8216bis-16#section-4.4.4.2 `#EXT-X-BYTERANGE`} */
-    byterange?: Byterange;
+    byterange?: Byterange | undefined;
 
     /** @see {@link https://datatracker.ietf.org/doc/html/draft-pantos-hls-rfc8216bis-16#section-4.4.4.5 `#EXT-X-MAP`} */
-    map?: AttrList<AttrT.Map>;
+    map?: AttrList<AttrT.Map> | undefined;
 
     /** @see {@link https://datatracker.ietf.org/doc/html/draft-pantos-hls-rfc8216bis-16#section-4.4.4.7 `#EXT-X-GAP`} */
-    gap?: boolean;
+    gap?: boolean | undefined;
 
     /** @see {@link https://datatracker.ietf.org/doc/html/draft-pantos-hls-rfc8216bis-16#section-4.4.4.8 `#EXT-X-BITRATE`} */
-    bitrate?: number;
+    bitrate?: number | undefined;
 
     /** @see {@link https://datatracker.ietf.org/doc/html/draft-pantos-hls-rfc8216bis-16#section-4.4.4.9 `#EXT-X-PART`} */
-    parts?: AttrList<AttrT.Part>[];
+    parts?: AttrList<AttrT.Part>[] | undefined;
 
     /** Custom vendor-defined properties */
-    vendor?: Iterable<[string, string | null]>;
+    vendor?: Iterable<[string, string | null]> | undefined;
 
     constructor(obj?: Proto<MediaSegment>);
     constructor(uri: string | typeof URL | undefined, meta: Readonly<MediaSegment>, version?: number);

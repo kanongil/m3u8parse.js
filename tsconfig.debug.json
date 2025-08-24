@@ -1,0 +1,16 @@
+{
+  "extends": "./tsconfig",
+  "compilerOptions": {
+    "composite": true,
+
+    "sourceMap": false,
+    "inlineSourceMap": true,
+    "inlineSources": true,
+    "skipLibCheck": true,
+    "noEmit": false,
+
+    "rootDir": "./src",
+    "outDir": "./lib",
+  },
+  "exclude": ["test/**"]
+}

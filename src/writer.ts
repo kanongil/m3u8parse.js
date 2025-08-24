@@ -1,9 +1,9 @@
-import type * as Attr from './attr-types.js';
+import type * as Attr from './attr-types.ts';
 
-import { TAnyAttr, AttrList, ImmutableAttrList } from './attrlist.js';
-import { isStringish } from './playlist-base.js';
-import { MediaPlaylist, ImmutableMediaSegment, ImmutableMainPlaylist as ImmutableMainPlaylist, ImmutableMediaPlaylist as ImmutableMediaPlaylist } from './playlist.js';
-import type { PropsOf } from './types.js';
+import { TAnyAttr, AttrList, ImmutableAttrList } from './attrlist.ts';
+import { isStringish } from './playlist-base.ts';
+import { MediaPlaylist, ImmutableMediaSegment, ImmutableMainPlaylist as ImmutableMainPlaylist, ImmutableMediaPlaylist as ImmutableMediaPlaylist } from './playlist.ts';
+import type { PropsOf } from './types.ts';
 
 
 const stringifyAttrs = function <T extends TAnyAttr>(attrs: ImmutableAttrList<T> | undefined) {

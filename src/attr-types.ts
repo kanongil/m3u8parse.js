@@ -8,7 +8,7 @@ export interface Resolution {
 }
 
 export interface Byterange {
-    offset?: number;
+    offset?: number | undefined;
     length: number;
 }
 
@@ -112,7 +112,6 @@ type SchemaValidate<T extends { [key: string]: Attr }> = {
 };
 
 /** {@link https://datatracker.ietf.org/doc/html/draft-pantos-hls-rfc8216bis-16#section-4.4.5.1 `EXT-X-DATERANGE`} attributes */
-// eslint-disable-next-line @typescript-eslint/ban-types
 export type Daterange<Schema extends SchemaValidate<{}> = {}> = {
     id: Attr.String;
     class?: Attr.String;
@@ -128,7 +127,7 @@ export type Daterange<Schema extends SchemaValidate<{}> = {}> = {
     'end-on-next'?: Attr.Enum;
 } & Schema;
 
-// eslint-disable-next-line @typescript-eslint/no-namespace, @typescript-eslint/no-redeclare
+// eslint-disable-next-line @typescript-eslint/no-redeclare
 export namespace Daterange {
 
     /**

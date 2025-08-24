@@ -1,14 +1,14 @@
 const { Buffer } = await import('node:' + 'buffer') as any;
 const { Stream } = await import('node:' + 'stream') as any;
 
-import { M3U8Parser, PlaylistType } from './parser.js';
+import { M3U8Parser, PlaylistType } from './parser.ts';
 
-import type { M3U8Playlist, MainPlaylist, MediaPlaylist } from './playlist.js';
+import type { M3U8Playlist, MainPlaylist, MediaPlaylist } from './playlist.ts';
 
-import parseString, { ParseOptions } from './index.js';
+import parseString, { ParseOptions } from './index.ts';
 
 
-export * from './index.js';
+export * from './index.ts';
 
 
 interface BufferLike extends Uint8Array {
@@ -20,7 +20,6 @@ interface BufferLike extends Uint8Array {
 }
 
 interface StreamLike {
-    // eslint-disable-next-line @typescript-eslint/ban-types
     pipe(destination: any, options?: any): any;
 
     // A few EventListener methods

@@ -1,7 +1,7 @@
-import { AttrList, AttrType } from './attrlist.js';
-import deserialize from './attr-deserialize.js';
-import { MediaPlaylist, MainPlaylist, MediaSegment, M3U8Playlist } from './playlist.js';
-import type { PropsOf } from './types.js';
+import { AttrList, AttrType } from './attrlist.ts';
+import deserialize from './attr-deserialize.ts';
+import { MediaPlaylist, MainPlaylist, MediaSegment, M3U8Playlist } from './playlist.ts';
+import type { PropsOf } from './types.ts';
 
 
 export enum PlaylistType {
@@ -52,7 +52,7 @@ const extParser = new Map<string,(state: ParserState, arg?: string) => void>([
         const attrs = new AttrList(arg);
         const id = attrs.get('group-id', AttrList.Types.String) ?? '#';
 
-        let list: AttrList[] & { type?: string } | undefined = (_.m3u8.groups ??= new Map()).get(id);
+        let list: AttrList[] & { type?: string | undefined } | undefined = (_.m3u8.groups ??= new Map()).get(id);
         if (!list) {
             list = [];
             _.m3u8.groups.set(id, list);
@@ -111,7 +111,6 @@ for (const [ext, entry] of MediaPlaylist._metas.entries()) {
 
 export class M3U8Parser {
 
-    // eslint-disable-next-line @typescript-eslint/no-empty-function
     static debug(line: string, ...args: unknown[]): void {}
 
     readonly extensions: NonNullable<ParserOptions['extensions']>;
@@ -166,7 +165,6 @@ export class M3U8Parser {
         return state.m3u8.master ? new MainPlaylist(state.m3u8 as any) : new MediaPlaylist(state.m3u8 as any);
     }
 
-    // eslint-disable-next-line @typescript-eslint/no-empty-function
     debug(line: string, ...args: unknown[]) {}
 
     _parseLine(line: string): void {
@@ -270,13 +268,12 @@ export class M3U8Parser {
 
 export class ParserError extends Error {
 
-    readonly name = 'ParserError';
+    override readonly name = 'ParserError';
+    override cause: any;
 
-    cause: any;
     line: string;
     lineNumber: number;
 
-    // eslint-disable-next-line @typescript-eslint/ban-types
     constructor(msg: string, options?: { line?: string; line_no?: number; cause?: unknown }) {
 
         super(msg ?? 'Error', options?.cause ? { cause: options.cause } : undefined);

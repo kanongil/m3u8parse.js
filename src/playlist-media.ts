@@ -1,15 +1,14 @@
-import type * as AttrT from './attr-types.js';
+import type * as AttrT from './attr-types.ts';
 
-import { TAnyAttr, AttrList, Byterange } from './attrlist.js';
-import { ImmutableMediaSegment, IndependentSegment, MediaSegment } from './media-segment.js';
-import { BasePlaylist, cloneAttrArray, ImmutableUriMapFunction, Immutify, IRewritableUris, rewriteAttrs, UriMapFunction } from './playlist-base.js';
-import { MainPlaylist } from './playlist-main.js';
-import type { Proto } from './types.js';
+import { TAnyAttr, AttrList, Byterange } from './attrlist.ts';
+import { ImmutableMediaSegment, IndependentSegment, MediaSegment } from './media-segment.ts';
+import { BasePlaylist, cloneAttrArray, ImmutableUriMapFunction, Immutify, IRewritableUris, rewriteAttrs, UriMapFunction } from './playlist-base.ts';
+import { MainPlaylist } from './playlist-main.ts';
+import type { Proto } from './types.ts';
 
 
 type Msn = number;
 
-/* eslint-disable no-unused-vars */
 enum PlaylistType {
     EVENT = 'EVENT',
     VOD = 'VOD'
@@ -20,7 +19,6 @@ enum ArrayMetas {
     'PRELOAD-HINT' = 'preload_hints',
     'RENDITION-REPORT' = 'rendition_reports'
 }
-/* eslint-enable no-unused-vars */
 
 interface Meta {
 
@@ -71,7 +69,7 @@ const tryBigInt = function (value: unknown): bigint | undefined {
             return toBigInt(value);
         }
     }
-    catch (err) { }
+    catch {}
 
     return undefined;
 };
@@ -102,7 +100,7 @@ export class MediaPlaylist extends BasePlaylist implements IRewritableUris {
         return index as MediaPlaylist;
     }
 
-    readonly master = false as const;
+    override readonly master = false as const;
 
     /** @see {@link https://datatracker.ietf.org/doc/html/draft-pantos-hls-rfc8216bis-16#section-4.4.3.1 `EXT-X-TARGETDURATION`} */
     target_duration: number;
@@ -111,22 +109,22 @@ export class MediaPlaylist extends BasePlaylist implements IRewritableUris {
     media_sequence: Msn;
 
     /** @see {@link https://datatracker.ietf.org/doc/html/draft-pantos-hls-rfc8216bis-16#section-4.4.3.3 `EXT-X-DISCONTINUITY-SEQUENCE`} */
-    discontinuity_sequence?: Msn;
+    discontinuity_sequence?: Msn | undefined;
 
     /** @see {@link https://datatracker.ietf.org/doc/html/draft-pantos-hls-rfc8216bis-16#section-4.4.3.4 `EXT-X-ENDLIST`} */
     ended: boolean;
 
     /** @see {@link https://datatracker.ietf.org/doc/html/draft-pantos-hls-rfc8216bis-16#section-4.4.3.5 `EXT-X-PLAYLIST-TYPE`} */
-    type?: PlaylistType | string;
+    type?: PlaylistType | string | undefined;
 
     /** @see {@link https://datatracker.ietf.org/doc/html/draft-pantos-hls-rfc8216bis-16#section-4.4.3.6 `EXT-X-I-FRAMES-ONLY`} */
     i_frames_only: boolean;
 
     /** @see {@link https://datatracker.ietf.org/doc/html/draft-pantos-hls-rfc8216bis-16#section-4.4.3.7 `EXT-X-PART-INF`} */
-    part_info?: AttrList<AttrT.PartInf>;
+    part_info?: AttrList<AttrT.PartInf> | undefined;
 
     /** @see {@link https://datatracker.ietf.org/doc/html/draft-pantos-hls-rfc8216bis-16#section-4.4.3.8 `EXT-X-SERVER-CONTROL`} */
-    server_control?: AttrList<AttrT.ServerControl>;
+    server_control?: AttrList<AttrT.ServerControl> | undefined;
 
     /** Media Segments @see {@link MediaSegment} @see {@link https://datatracker.ietf.org/doc/html/draft-pantos-hls-rfc8216bis-16#section-4.4.4} */
     segments: MediaSegment[];
@@ -197,7 +195,7 @@ export class MediaPlaylist extends BasePlaylist implements IRewritableUris {
         return undefined;
     }
 
-    isLive(): boolean {
+    override isLive(): boolean {
 
         return !(this.ended || this.type === PlaylistType.VOD);
     }

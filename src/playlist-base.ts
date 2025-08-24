@@ -1,10 +1,10 @@
-import type * as AttrT from './attr-types.js';
-import type { TAnyAttr, AttrType, ImmutableAttrList } from './attrlist.js';
-import type { ImmutableMediaSegment, MediaSegment } from './media-segment.js';
+import type * as AttrT from './attr-types.ts';
+import type { TAnyAttr, AttrType, ImmutableAttrList } from './attrlist.ts';
+import type { ImmutableMediaSegment, MediaSegment } from './media-segment.ts';
 
-import { AttrList } from './attrlist.js';
-import { PlaylistWriter } from './writer.js';
-import type { Proto } from './types.js';
+import { AttrList } from './attrlist.ts';
+import { PlaylistWriter } from './writer.ts';
+import type { Proto } from './types.ts';
 
 
 export type UriMapFunction<T extends string = string> = (uri: string | undefined, type: T, data: unknown) => string | undefined | void;
@@ -14,7 +14,6 @@ export type ImmutableUriMapFunction<T extends string = string> = (uri: string | 
 type ImmutableMap<K, V> = Omit<Map<K, V>, 'clear' | 'set' | 'delete'>;
 
 export type Immutify<T> =
-    // eslint-disable-next-line @typescript-eslint/ban-types
     T extends Function ? T :
         T extends AttrList<infer U> ? ImmutableAttrList<U> :
             T extends Map<string, AttrList<infer U>[]> ? ImmutableMap<string, AttrList<U>[]> :
@@ -128,16 +127,16 @@ export class BasePlaylist {
     version: number;
 
     /** @see {@link https://datatracker.ietf.org/doc/html/draft-pantos-hls-rfc8216bis-16#section-4.4.2.1 `EXT-X-INDEPENDENT-SEGMENTS`} */
-    independent_segments?: boolean;
+    independent_segments?: boolean | undefined;
 
     /** @see {@link https://datatracker.ietf.org/doc/html/draft-pantos-hls-rfc8216bis-16#section-4.4.2.2 `EXT-X-START`} */
-    start?: AttrList<AttrT.Start>;
+    start?: AttrList<AttrT.Start> | undefined;
 
     /** @see {@link https://datatracker.ietf.org/doc/html/draft-pantos-hls-rfc8216bis-16#section-4.4.2.3 `EXT-X-DEFINE`} */
     defines: AttrList<AttrT.Define>[];
 
     /** Custom vendor-defined properties */
-    vendor?: Iterable<[string, string | null]>;
+    vendor?: Iterable<[string, string | null]> | undefined;
 
     constructor(obj: Immutify<Proto<BasePlaylist>>) {
 
