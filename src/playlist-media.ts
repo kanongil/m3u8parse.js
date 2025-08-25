@@ -46,7 +46,7 @@ const formatMsn = function (obj?: Msn): Msn | undefined {
 
 const useBigInt = typeof BigInt !== 'undefined' && typeof BigInt(0) === 'bigint';     // Only when supported
 
-const toBigInt = useBigInt ? BigInt : (value: unknown) => {
+const toBigInt = useBigInt ? BigInt : (value: bigint | boolean | number | string) => {
 
     const number = Number(value);
     if (isNaN(number) || Math.floor(number) !== number) {
@@ -91,13 +91,13 @@ export class MediaPlaylist extends BasePlaylist implements IRewritableUris {
     public static readonly Type = PlaylistType;
     public static readonly _metas = new Map(Object.entries(ArrayMetas));
 
-    public static cast(index: MediaPlaylist | MainPlaylist): MediaPlaylist {
+    public static cast(index: MediaPlaylist | MainPlaylist): MediaPlaylist | never {
 
         if (index.master) {
             throw new Error('Cannot cast a main playlist');
         }
 
-        return index as MediaPlaylist;
+        return index;
     }
 
     override readonly master = false as const;
@@ -156,7 +156,7 @@ export class MediaPlaylist extends BasePlaylist implements IRewritableUris {
             this.segments = obj.segments.map((segment) => new MediaSegment(segment));
         }
 
-        this.meta = Object.create(null);
+        this.meta = Object.create(null) as Meta;
         if (obj.meta) {
             if (obj.meta.skip) {
                 this.meta.skip = new AttrList<AttrT.Skip>(obj.meta.skip);
@@ -311,12 +311,12 @@ export class MediaPlaylist extends BasePlaylist implements IRewritableUris {
 
         if (typeof date === 'boolean') {
             findNearestAfter = date;
-            date = null as any;
+            date = null as unknown as Date;
         }
 
         let startTime = date;
         if (typeof date !== 'number') {
-            startTime = date ? +new Date(date as any) : Date.now();
+            startTime = date ? +new Date(date) : Date.now();
         }
 
         startTime = startTime as number;
@@ -345,7 +345,7 @@ export class MediaPlaylist extends BasePlaylist implements IRewritableUris {
 
                 // update firstValid
                 const delta = segmentEndTime - startTime - 1;
-                if (delta >= 0 && (firstValid.delta === null || delta < firstValid.delta! || delta < segmentDuration)) {
+                if (delta >= 0 && (firstValid.delta === null || delta < firstValid.delta || delta < segmentDuration)) {
                     firstValid.msn = this.media_sequence + i;
                     firstValid.delta = delta;
                     firstValid.duration = segmentDuration;

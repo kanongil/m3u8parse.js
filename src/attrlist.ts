@@ -40,10 +40,11 @@ export class AttrList<E extends TAnyAttr = TAnyAttr> extends Map<StringKeys<E>, 
 
         super();
 
-        const set = (key: string, value: unknown, format?: (val: unknown) => string) => {
+        const set = <T>(key: string, value: T, format?: (val: NonNullable<T>) => string) => {
 
             if (value !== null && value !== undefined) {
-                super.set(key as any, format ? format(value) : <string>value);
+                // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
+                super.set(key as any, format ? format(value) : value as string);
             }
         };
 
@@ -61,6 +62,7 @@ export class AttrList<E extends TAnyAttr = TAnyAttr> extends Map<StringKeys<E>, 
 
             while ((match = re.exec(attrs)) !== null) {
                 const attr = tokenify(match[1]);
+                // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
                 if (super.has(attr as any)) {
                     throw new Error('Duplicate attribute key: ' + attr);
                 }
@@ -75,14 +77,15 @@ export class AttrList<E extends TAnyAttr = TAnyAttr> extends Map<StringKeys<E>, 
         }
         else {
             for (const [key, value] of attrs) {
-                set(tokenify(key), value, (val) => `${val}`);
+                // eslint-disable-next-line @typescript-eslint/no-base-to-string
+                set(tokenify(key), value, (val) => val.toString());
             }
         }
     }
 
     override get(attr: StringKeys<E>): string | undefined;
     override get<K extends StringKeys<E>, T extends E[K]>(attr: K, type: Enum<T>): TypeMapping<T> | undefined;
-    override get(attr: StringKeys<E>, type: Enum<Attr> = Attr.Enum): unknown | undefined {
+    override get(attr: StringKeys<E>, type: Enum<Attr> = Attr.Enum): TypeMapping<any> | undefined {
 
         attr = tokenify(attr);
 
@@ -145,7 +148,7 @@ export class AttrList<E extends TAnyAttr = TAnyAttr> extends Map<StringKeys<E>, 
 
     toJSON(): object {
 
-        const obj = Object.create(null);
+        const obj = Object.create(null) as { [key: string]: string };
 
         for (const [key, value] of this) {
             obj[key as string] = value;
@@ -155,4 +158,4 @@ export class AttrList<E extends TAnyAttr = TAnyAttr> extends Map<StringKeys<E>, 
     }
 }
 
-export interface ImmutableAttrList<T extends TAnyAttr = TAnyAttr> extends Pick<AttrList<T>, keyof ReadonlyMap<any, any>> {}
+export type ImmutableAttrList<T extends TAnyAttr = TAnyAttr> = Pick<AttrList<T>, keyof ReadonlyMap<any, any>>;

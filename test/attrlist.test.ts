@@ -59,7 +59,7 @@ describe('AttrList', () => {
         expect(list.toString()).to.equal('INT=42,HEX=0x42,FLOAT=0.42,STRING="hi",ENUM=OK,RES=4x2');
         list.set('extra', 123, 'int');
         expect(list.toString()).to.equal('INT=42,HEX=0x42,FLOAT=0.42,STRING="hi",ENUM=OK,RES=4x2,EXTRA=123');
-        list!.set('extra', null);
+        list.set('extra', null);
         expect(list.toString()).to.equal('INT=42,HEX=0x42,FLOAT=0.42,STRING="hi",ENUM=OK,RES=4x2');
     });
 
@@ -96,7 +96,7 @@ describe('AttrList', () => {
             it('handles all known types', () => {
 
                 for (const [type, value] of types) {
-                    expect(list!.get(type, type as 'enum')).to.equal(value);
+                    expect(list.get(type, type as 'enum')).to.equal(value);
                 }
             });
 
@@ -104,20 +104,20 @@ describe('AttrList', () => {
 
                 const empty = new AttrList();
                 for (const [type] of types) {
-                    expect(empty!.get(type, type as 'enum')).to.be.undefined();
+                    expect(empty.get(type, type as 'enum')).to.be.undefined();
                 }
             });
 
             it('fails on unknown types', () => {
 
-                expect(() => list!.get('int', 'b' as 'enum')).to.throw('Invalid type: b');
+                expect(() => list.get('int', 'b' as 'enum')).to.throw('Invalid type: b');
             });
 
             it('fails on non-string attributes', () => {
 
-                expect(() => list!.get(undefined as any)).to.throw('Attributes must be a "string"');
-                expect(() => list!.get({} as any)).to.throw('Attributes must be a "string"');
-                expect(() => list!.get(Symbol() as any)).to.throw('Attributes must be a "string"');
+                expect(() => list.get(undefined as any)).to.throw('Attributes must be a "string"');
+                expect(() => list.get({} as any)).to.throw('Attributes must be a "string"');
+                expect(() => list.get(Symbol() as any)).to.throw('Attributes must be a "string"');
             });
         });
 
@@ -130,12 +130,12 @@ describe('AttrList', () => {
                     attrs.set(type, value, type as 'enum');
                 }
 
-                expect(attrs).to.equal(list!);
+                expect(attrs).to.equal(list);
             });
 
             it('fails on unknown types', () => {
 
-                expect(() => list!.set('int', 42, 'b' as 'int')).to.throw('Invalid type: b');
+                expect(() => list.set('int', 42, 'b' as 'int')).to.throw('Invalid type: b');
             });
 
             it('handles falsy types', () => {
@@ -163,13 +163,13 @@ describe('AttrList', () => {
 
             it('deletes attr when null or undefined', () => {
 
-                expect(list!.has('string')).to.be.true();
-                list!.set('string', null);
-                expect(list!.has('string')).to.be.false();
+                expect(list.has('string')).to.be.true();
+                list.set('string', null);
+                expect(list.has('string')).to.be.false();
 
-                expect(list!.has('enum')).to.be.true();
-                list!.set('enum', undefined);
-                expect(list!.has('enum')).to.be.false();
+                expect(list.has('enum')).to.be.true();
+                list.set('enum', undefined);
+                expect(list.has('enum')).to.be.false();
             });
 
             it('fails on non-string attributes', () => {

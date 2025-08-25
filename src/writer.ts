@@ -16,6 +16,7 @@ const stringifyAttrs = function <T extends TAnyAttr> (attrs: ImmutableAttrList<T
         attrs = new AttrList<T>(attrs);
     }
 
+    // eslint-disable-next-line @typescript-eslint/no-base-to-string
     return attrs.size > 0 ? attrs.toString() : undefined;
 };
 
@@ -57,6 +58,7 @@ export class PlaylistWriter {
             this._push('');
         }
         finally {
+            // eslint-disable-next-line @typescript-eslint/unbound-method
             this._push = PlaylistWriter.prototype._push;
         }
     }
@@ -246,6 +248,7 @@ export class PlaylistWriter {
             this._push('#EXT-X-' + ext);
         }
         else {
+            // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
             this._push(`#EXT-X-${ext}:${value}`);
         }
     }

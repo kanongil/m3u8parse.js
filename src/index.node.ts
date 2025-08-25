@@ -1,5 +1,15 @@
-const { Buffer } = await import('node:' + 'buffer') as any;
-const { Stream } = await import('node:' + 'stream') as any;
+interface BufferIntf {
+    isBuffer(obj: unknown): boolean;
+}
+
+interface StreamImpl {
+    new(): StreamImpl & StreamLike;
+    setEncoding(e: string): void;
+    [Symbol.asyncIterator]: () => AsyncIterator<string>;
+}
+
+const { Buffer } = await import('node:' + 'buffer') as { Buffer: BufferIntf };
+const { Stream } = await import('node:' + 'stream') as { Stream: StreamImpl };
 
 import { M3U8Parser, PlaylistType } from './parser.ts';
 
@@ -30,7 +40,7 @@ interface StreamLike {
 }
 
 
-const parseStream = async function (stream: any, options: ParseOptions): Promise<M3U8Playlist> {
+const parseStream = async function (stream: typeof Stream, options: ParseOptions): Promise<M3U8Playlist> {
 
     const parser = new M3U8Parser(options);
 
@@ -75,6 +85,6 @@ export default function (input: StreamLike | string | BufferLike, options: Parse
         return parseStream(input, options);
     }
 
-    input = Buffer.isBuffer(input) ? (<BufferLike>input).toString('utf-8') : <string>input;
+    input = Buffer.isBuffer(input) ? (input as BufferLike).toString('utf-8') : input as string;
     return parseString(input, options);
 }

@@ -1,8 +1,8 @@
 import { Attr, Byterange, Resolution } from './attr-types.ts';
 
 
-const deserialize: Record<Attr, (stringValue: string) => any> = {
-    [Attr.BigInt](stringValue): bigint {
+const deserialize = {
+    [Attr.BigInt](stringValue: string): bigint {
 
         const intValue = BigInt(stringValue);
 
@@ -13,9 +13,9 @@ const deserialize: Record<Attr, (stringValue: string) => any> = {
         return intValue;
     },
 
-    [Attr.HexInt](stringValue): bigint {
+    [Attr.HexInt](stringValue: string): bigint {
 
-        const intValue = BigInt(stringValue!);
+        const intValue = BigInt(stringValue);
 
         if (!/^\s*0x/.test(stringValue)) {
             throw new SyntaxError('Representation is not hexadecimal integer compatible');
@@ -24,7 +24,7 @@ const deserialize: Record<Attr, (stringValue: string) => any> = {
         return intValue;
     },
 
-    [Attr.Int](stringValue): number {
+    [Attr.Int](stringValue: string): number {
 
         const intValue = parseInt(stringValue, 10);
         if (intValue > Number.MAX_SAFE_INTEGER) {
@@ -34,7 +34,7 @@ const deserialize: Record<Attr, (stringValue: string) => any> = {
         return intValue;
     },
 
-    [Attr.HexNo](stringValue): number {
+    [Attr.HexNo](stringValue: string): number {
 
         const intValue = parseInt(stringValue, 16);
         if (intValue > Number.MAX_SAFE_INTEGER) {
@@ -44,33 +44,33 @@ const deserialize: Record<Attr, (stringValue: string) => any> = {
         return intValue;
     },
 
-    [Attr.Float](stringValue): number {
+    [Attr.Float](stringValue: string): number {
 
         return parseFloat(stringValue);
     },
 
-    [Attr.SignedFloat](stringValue): number {
+    [Attr.SignedFloat](stringValue: string): number {
 
         return parseFloat(stringValue);
     },
 
-    [Attr.String](stringValue): string | undefined {
+    [Attr.String](stringValue: string): string {
 
         return stringValue.slice(1, -1);
     },
 
-    [Attr.Enum](stringValue): string {
+    [Attr.Enum](stringValue: string): string {
 
         return stringValue;
     },
 
-    [Attr.List](stringValue): string[] {
+    [Attr.List](stringValue: string): string[] {
 
         const list = deserialize[Attr.String](stringValue);
         return list.split(',');
     },
 
-    [Attr.Resolution](stringValue): Resolution | undefined {
+    [Attr.Resolution](stringValue: string): Resolution | undefined {
 
         const res = /^(\d+)x(\d+)$/.exec(stringValue);
         if (res === null) {
@@ -80,7 +80,7 @@ const deserialize: Record<Attr, (stringValue: string) => any> = {
         return { width: parseInt(res[1], 10), height: parseInt(res[2], 10) };
     },
 
-    [Attr.Byterange](stringValue): Byterange | undefined {
+    [Attr.Byterange](stringValue: string): Byterange | undefined {
 
         const res = /^"?(\d+)(?:@(\d+))?"?$/.exec(stringValue);
         if (res === null) {
@@ -94,4 +94,7 @@ const deserialize: Record<Attr, (stringValue: string) => any> = {
     }
 };
 
-export default deserialize;
+type MustExtend<T, E> = T extends E ? T : never;
+
+// eslint-disable-next-line @typescript-eslint/no-unnecessary-type-assertion
+export default deserialize as MustExtend<typeof deserialize, Record<Attr, (stringValue: string) => unknown>>;

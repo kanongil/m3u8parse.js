@@ -14,6 +14,7 @@ export type ImmutableUriMapFunction<T extends string = string> = (uri: string | 
 type ImmutableMap<K, V> = Omit<Map<K, V>, 'clear' | 'set' | 'delete'>;
 
 export type Immutify<T> =
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-function-type
     T extends Function ? T :
         T extends AttrList<infer U> ? ImmutableAttrList<U> :
             T extends Map<string, AttrList<infer U>[]> ? ImmutableMap<string, AttrList<U>[]> :
@@ -34,11 +35,11 @@ export const cloneAttrArray = function <T extends TAnyAttr> (src?: readonly Immu
 
 
 /** Map that JSON serializes to an object that can restore the map with Object.entries() */
-class JSONableMap extends Map {
+class JSONableMap<K extends string, V> extends Map<K, V> {
 
-    toJSON() {
+    toJSON(): object {
 
-        const obj = Object.create(null);
+        const obj = Object.create(null) as { [key: string]: V };
 
         for (const [key, value] of this) {
             obj[key] = value;
@@ -50,12 +51,13 @@ class JSONableMap extends Map {
 
 const isIterable = function (x: any): x is Iterable<any> {
 
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
     return !!x?.[Symbol.iterator];
 };
 
 export const cloneAttrMap = function <T extends TAnyAttr> (src?: Iterable<[string, readonly ImmutableAttrList<T>[]]> | { [key: string]: readonly ImmutableAttrList<T>[] }): Map<string, AttrList<T>[]> {
 
-    const dst = new JSONableMap();
+    const dst = new JSONableMap<string, AttrList<T>[]>();
 
     if (src) {
         if (isIterable(src)) {
@@ -174,6 +176,7 @@ export class BasePlaylist {
 
     toString(): string {
 
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
         return new PlaylistWriter(this as any).toString();
     }
 }

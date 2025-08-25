@@ -29,7 +29,6 @@ const tsifyConfig = function (from) {
 export default TsEslint.config(
     globalIgnores(['lib/**', 'test/**.js', 'test/**.cjs', 'test/**.mjs', 'test/fixtures/**']),
     Eslint.configs.recommended,
-    TsEslint.configs.eslintRecommended,
     EslintPluginHapi.configs.recommended,
     {
         languageOptions: {
@@ -40,7 +39,8 @@ export default TsEslint.config(
     {
         files: ['**/*.ts', '**/*.tsx', '**/*.mts', '**/*.cts'],
         extends: [
-            TsEslint.configs.base,
+            TsEslint.configs.eslintRecommended,
+            TsEslint.configs.recommendedTypeChecked,
             ...tsifyConfig(EslintPluginHapi.configs.recommended)
         ],
         languageOptions: {
@@ -59,6 +59,16 @@ export default TsEslint.config(
             '@typescript-eslint/prefer-for-of': 'warn',
             //'@typescript-eslint/type-annotation-spacing': 'warn',
             '@typescript-eslint/unified-signatures': 'warn'
+        }
+    },
+    {
+        files: ['test/**/*.ts', 'test/**/*.mts', 'test/**/*.cts'],
+        rules: {
+            '@typescript-eslint/no-unsafe-call': 'off',
+            '@typescript-eslint/no-unsafe-member-access': 'off',
+            '@typescript-eslint/no-unsafe-return': 'off',
+            '@typescript-eslint/no-unsafe-assignment': 'off',
+            '@typescript-eslint/no-unsafe-argument': 'off'
         }
     }
 );

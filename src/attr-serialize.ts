@@ -4,12 +4,12 @@ import { Attr, Byterange, Resolution } from './attr-types.ts';
 const serialize: Record<Attr, (value: any) => string> = {
     [Attr.BigInt](value: number | bigint): string {
 
-        return BigInt(value!).toString(10);
+        return BigInt(value).toString(10);
     },
 
     [Attr.HexInt](value: number | bigint): string {
 
-        return '0x' + BigInt(value!).toString(16);
+        return '0x' + BigInt(value).toString(16);
     },
 
     [Attr.Int](value: number | bigint): string {
@@ -54,7 +54,7 @@ const serialize: Record<Attr, (value: any) => string> = {
 
     [Attr.Resolution](value: Resolution): string {
 
-        return '' + Math.floor(value?.width!) + 'x' + Math.floor(value?.height!);
+        return '' + Math.floor(value?.width) + 'x' + Math.floor(value?.height);
     },
 
     [Attr.Byterange](value: Byterange): string {

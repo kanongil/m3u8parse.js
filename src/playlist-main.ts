@@ -21,7 +21,7 @@ export class MainPlaylist extends BasePlaylist implements IRewritableUris {
             throw new Error('Cannot cast a media playlist');
         }
 
-        return index as MainPlaylist;
+        return index;
     }
 
     override readonly master = true as const;

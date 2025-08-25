@@ -21,19 +21,19 @@ describe('M3U8Parse', () => {
         expect(index.master).to.be.false();
     });
 
-    it('supports buffer input', async () => {
+    it('supports buffer input', () => {
 
         const buf = Fs.readFileSync(Path.join(fixtureDir, 'enc.m3u8'));
-        const index = await M3U8Parse(buf);
+        const index = M3U8Parse(buf);
 
         expect(index).to.exist();
         expect(index.master).to.be.false();
     });
 
-    it('supports string input', async () => {
+    it('supports string input', () => {
 
         const str = Fs.readFileSync(Path.join(fixtureDir, 'enc.m3u8'), 'utf-8');
-        const index = await M3U8Parse(str);
+        const index = M3U8Parse(str);
 
         expect(index).to.exist();
         expect(index.master).to.be.false();
@@ -659,33 +659,33 @@ describe('M3U8Playlist', () => {
 
     describe('#toString()', () => {
 
-        it('should output valid index files', async () => {
+        it('should output valid index files', () => {
 
-            const index = await M3U8Parse(testIndex.toString(), { type: 'media' });
+            const index = M3U8Parse(testIndex.toString(), { type: 'media' });
             expect(index).to.exist();
             expect(testIndex).to.equal(index);
 
-            const index2 = await M3U8Parse(testIndexAlt.toString(), { type: 'media' });
+            const index2 = M3U8Parse(testIndexAlt.toString(), { type: 'media' });
             expect(index2).to.exist();
             expect(testIndexAlt).to.equal(index2);
 
-            const index3 = await M3U8Parse(testIndexSingle.toString(), { type: 'media' });
+            const index3 = M3U8Parse(testIndexSingle.toString(), { type: 'media' });
             expect(index3).to.exist();
             expect(testIndexSingle).to.equal(index3);
 
-            const index4 = await M3U8Parse(testIndexLl.toString(), { type: 'media' });
+            const index4 = M3U8Parse(testIndexLl.toString(), { type: 'media' });
             expect(index4).to.exist();
             expect(testIndexLl).to.equal(index4);
         });
 
         it('should output valid main playlist files', async () => {
 
-            const index = await M3U8Parse(mainIndex.toString());
+            const index = M3U8Parse(mainIndex.toString());
             expect(index).to.exist();
             expect(mainIndex).to.equal(index);
 
             const mainIndexV6 = await M3U8Parse(Fs.createReadStream(Path.join(fixtureDir, 'variant_v6.m3u8')));
-            const index2 = await M3U8Parse(mainIndexV6.toString());
+            const index2 = M3U8Parse(mainIndexV6.toString());
             expect(index2).to.exist();
             expect(mainIndexV6).to.equal(index2);
         });

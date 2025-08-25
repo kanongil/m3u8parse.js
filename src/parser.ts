@@ -18,25 +18,25 @@ export interface ParserOptions {
 
 interface ParserState {
     readonly m3u8: Partial<Omit<PropsOf<MediaPlaylist>, 'master'> & Omit<PropsOf<MainPlaylist>, 'master'> & { master: boolean }>;
-    meta: MediaSegment & { info?: AttrList };
+    meta: Partial<MediaSegment> & { info?: AttrList };
 }
 
 
 const parseDecimalInteger = deserialize[AttrType.Int];
 
 
-const extParser = new Map<string,(state: ParserState, arg?: string) => void>([
+const extParser = new Map<string,(state: ParserState, arg: string) => void>([
     /* eslint-disable no-return-assign */
-    ['VERSION', (_, arg) => _.m3u8.version = parseInt(arg!, 10)],
-    ['TARGETDURATION', (_, arg) => _.m3u8.target_duration = parseDecimalInteger(arg!)],
-    ['MEDIA-SEQUENCE', (_, arg) => _.m3u8.media_sequence = parseDecimalInteger(arg!)],
-    ['DISCONTINUITY-SEQUENCE', (_, arg) => _.m3u8.discontinuity_sequence = parseDecimalInteger(arg!)],
+    ['VERSION', (_, arg) => _.m3u8.version = parseInt(arg, 10)],
+    ['TARGETDURATION', (_, arg) => _.m3u8.target_duration = parseDecimalInteger(arg)],
+    ['MEDIA-SEQUENCE', (_, arg) => _.m3u8.media_sequence = parseDecimalInteger(arg)],
+    ['DISCONTINUITY-SEQUENCE', (_, arg) => _.m3u8.discontinuity_sequence = parseDecimalInteger(arg)],
     ['PLAYLIST-TYPE', (_, arg) => _.m3u8.type = arg!],
-    ['START', (_, arg) => _.m3u8.start = new AttrList(arg!)],
+    ['START', (_, arg) => _.m3u8.start = new AttrList(arg)],
     ['INDEPENDENT-SEGMENTS', (_) => _.m3u8.independent_segments = true],
     ['ENDLIST', (_) => _.m3u8.ended = true],
     ['KEY', (_, arg) => (_.meta.keys ??= []).push(new AttrList(arg))],
-    ['PROGRAM-DATE-TIME', (_, arg) => _.meta.program_time = new Date(arg!)],
+    ['PROGRAM-DATE-TIME', (_, arg) => _.meta.program_time = new Date(arg)],
     ['DISCONTINUITY', (_) => _.meta.discontinuity = true],
 
     // main
@@ -81,7 +81,7 @@ const extParser = new Map<string,(state: ParserState, arg?: string) => void>([
     }],
     ['SESSION-KEY', (_, arg) => (_.m3u8.session_keys ??= []).push(new AttrList(arg))],
     ['GAP', (_) => _.meta.gap = true],
-    ['BITRATE', (_, arg) => _.meta.bitrate = parseDecimalInteger(arg!)],
+    ['BITRATE', (_, arg) => _.meta.bitrate = parseDecimalInteger(arg)],
     ['DEFINE', (_, arg) => (_.m3u8.defines ??= []).push(new AttrList(arg))],
     ['PART-INF', (_, arg) => _.m3u8.part_info = new AttrList(arg)],
     ['PART', (_, arg) => (_.meta.parts ??= []).push(new AttrList(arg))],
@@ -89,7 +89,7 @@ const extParser = new Map<string,(state: ParserState, arg?: string) => void>([
     ['I-FRAMES-ONLY', (_) => _.m3u8.i_frames_only = true],
     ['BYTERANGE', (_, arg) => {
 
-        const n = arg!.split('@');
+        const n = arg.split('@');
         _.meta.byterange = { length: parseInt(n[0], 10) };
         if (n.length > 1) {
             _.meta.byterange.offset = parseInt(n[1], 10);
@@ -111,13 +111,13 @@ for (const [ext, entry] of MediaPlaylist._metas.entries()) {
 
 export class M3U8Parser {
 
-    static debug(line: string, ...args: unknown[]): void {}
+    static debug(this: void, line: string, ...args: unknown[]): void {}
 
     readonly extensions: NonNullable<ParserOptions['extensions']>;
 
     // Parser state
 
-    state: ParserState = { m3u8: {}, meta: {} as any };
+    state: ParserState = { m3u8: {}, meta: {} };
     lineNo = 0;
 
     constructor(options: ParserOptions = {}) {
@@ -149,7 +149,7 @@ export class M3U8Parser {
 
         if (Object.keys(state.meta).length) {
             (state.m3u8.segments ??= []).push(new MediaSegment(undefined, state.meta, state.m3u8.version));    // Append a partial segment
-            state.meta = {} as any;
+            state.meta = {};
         }
 
         if (type) {
@@ -162,6 +162,7 @@ export class M3U8Parser {
             }
         }
 
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
         return state.m3u8.master ? new MainPlaylist(state.m3u8 as any) : new MediaPlaylist(state.m3u8 as any);
     }
 
@@ -206,7 +207,7 @@ export class M3U8Parser {
         else if (state.m3u8.master) {
             state.meta.uri = line;
             (state.m3u8.variants ??= []).push({ uri: state.meta.uri, info: state.meta.info }); // FIXME: ??
-            state.meta = {} as any;
+            state.meta = {};
         }
         else {
             if (!('duration' in state.meta)) {
@@ -214,7 +215,7 @@ export class M3U8Parser {
             }
 
             (state.m3u8.segments ??= []).push(new MediaSegment(line, state.meta, state.m3u8.version));
-            state.meta = {} as any;
+            state.meta = {};
         }
 
     }
