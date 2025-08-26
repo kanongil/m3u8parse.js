@@ -1,0 +1,6 @@
+{
+    "$schema": "https://json.schemastore.org/mocharc.json",
+    "enable-source-maps": true,
+    "check-leaks": true,
+    "reporter": "dot"
+}

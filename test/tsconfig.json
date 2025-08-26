@@ -1,10 +1,12 @@
 {
   "extends": "../tsconfig",
   "compilerOptions": {
-    "rewriteRelativeImportExtensions": false,
+    "rewriteRelativeImportExtensions": true,
+    "erasableSyntaxOnly": true,
+    "verbatimModuleSyntax": true,
+
     "inlineSourceMap": true,
     "declaration": false,
-    "noEmit": false,
     "types": []
   },
   "references": [{

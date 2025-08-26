@@ -6,13 +6,11 @@
   "types": "lib/index.d.ts",
   "type": "module",
   "scripts": {
-    "clean": "tsc -b tsconfig.*.json test --clean; rm -Rf ./coverage",
-    "mocha": "mocha --enable-source-maps -R dot --check-leaks 'test/*.test.js'",
-    "lint": "eslint",
-    "postpack": "npm run clean",
+    "clean": "tsc -b tsconfig.*.json test test/tsconfig.emitted.json --clean; rm -Rf ./coverage",
     "prepack": "npm run clean && tsc -b tsconfig.publish.json --force",
     "pretest": "concurrently 'eslint' 'tsc -b test'",
-    "test": "c8 --check-coverage npm run mocha",
+    "test": "c8 --check-coverage mocha --experimental-strip-types 'test/*.test.ts'",
+    "test-full": "eslint && tsc -b test/tsconfig.emitted.json && c8 --check-coverage mocha 'test/*.test.js'",
     "test-cov-html": "tsc -b test && c8 -r html npm run mocha"
   },
   "keywords": [

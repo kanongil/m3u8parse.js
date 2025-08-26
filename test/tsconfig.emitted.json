@@ -1,0 +1,9 @@
+{
+  "extends": "./tsconfig",
+  "compilerOptions": {
+    "noEmit": false,
+  },
+  "references": [{
+    "path": "../tsconfig.debug.json",
+  }],
+}
