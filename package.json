@@ -6,9 +6,9 @@
   "types": "lib/index.d.ts",
   "type": "module",
   "scripts": {
-    "clean": "tsc -b tsconfig.*.json test test/tsconfig.emitted.json --clean; rm -Rf ./coverage",
+    "clean": "tsc -b tsconfig.*.json test test/tsconfig.emitted.json --clean; rm -Rf ./coverage ./.eslintcache",
     "prepack": "npm run clean && tsc -b tsconfig.publish.json --force",
-    "pretest": "concurrently 'eslint' 'tsc -b test'",
+    "pretest": "concurrently 'eslint --cache' 'tsc -b test'",
     "test": "c8 --check-coverage mocha --experimental-strip-types 'test/*.test.ts'",
     "test-full": "eslint && tsc -b test/tsconfig.emitted.json && c8 --check-coverage mocha 'test/*.test.js'",
     "test-cov-html": "tsc -b test && c8 -r html npm run mocha"
