@@ -7,7 +7,7 @@
   "type": "module",
   "scripts": {
     "clean": "tsc -b tsconfig.*.json test --clean; rm -Rf ./coverage",
-    "mocha": "mocha -R dot --check-leaks 'test/*.test.js'",
+    "mocha": "mocha --enable-source-maps -R dot --check-leaks 'test/*.test.js'",
     "lint": "eslint",
     "postpack": "npm run clean",
     "prepack": "npm run clean && tsc -b tsconfig.publish.json --force",

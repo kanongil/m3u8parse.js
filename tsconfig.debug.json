@@ -3,10 +3,8 @@
   "compilerOptions": {
     "composite": true,
 
-    "sourceMap": false,
-    "inlineSourceMap": true,
-    "inlineSources": true,
-    "skipLibCheck": true,
+    "sourceMap": true,
+    "skipLibCheck": false,
     "noEmit": false,
 
     "rootDir": "./src",
