@@ -1,5 +1,8 @@
 {
     "$schema": "https://json.schemastore.org/mocharc.json",
+    "node-option": [
+        "unhandled-rejections=strict"
+    ],
     "enable-source-maps": true,
     "check-leaks": true,
     "reporter": "dot"
