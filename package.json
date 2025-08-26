@@ -7,7 +7,7 @@
   "type": "module",
   "scripts": {
     "clean": "tsc -b tsconfig.*.json test --clean; rm -Rf ./coverage",
-    "mocha": "mocha -R dot --check-leaks 'test/*.test.ts'",
+    "mocha": "mocha -R dot --check-leaks 'test/*.test.js'",
     "lint": "eslint",
     "postpack": "npm run clean",
     "prepack": "npm run clean && tsc -b tsconfig.publish.json --force",
@@ -43,7 +43,7 @@
   "devDependencies": {
     "@eslint/js": "^9.34.0",
     "@hapi/code": "^9.0.1",
-    "@hapi/eslint-plugin": "^7.0.0",
+    "@hapi/eslint-plugin": "github:kanongil/eslint-plugin#lazy-module-config",
     "@types/mocha": "^10.0.10",
     "@types/node": "^18.14.0",
     "@typescript-eslint/eslint-plugin": "^8.40.0",
