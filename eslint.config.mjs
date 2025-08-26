@@ -70,5 +70,10 @@ export default TsEslint.config(
             '@typescript-eslint/no-unsafe-assignment': 'off',
             '@typescript-eslint/no-unsafe-argument': 'off'
         }
+    },
+    {
+        rules: {
+            semi: 'warn'
+        }
     }
 );
